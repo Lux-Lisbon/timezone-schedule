@@ -59,6 +59,7 @@ def changeText(y,x):
 
 # def selected(event):
 
+# test
 
 def clock(y,guiClock):
     try:
