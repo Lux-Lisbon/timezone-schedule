@@ -60,53 +60,18 @@ def changeText(y,x):
 # def selected(event):
 
 
-def clock(y):
+def clock(y,guiClock):
     try:
         clockVar = dt.datetime.now(pytz.timezone(y.get()))
         nowTime = clockVar.strftime("%H:%M:%S")
 
         # guiClock.config(text=timezoneVar.get())
         guiClock.config(text=nowTime)
-        guiClock.after(1000, clock, y)
+        guiClock.after(1000, clock, y, guiClock)
     
     except:
         guiClock.config(text="Placeholder")
-        guiClock.after(1000, clock, y)
-
-def clock2(timezoneMenu2):
-    # nowTime2 = dt.datetime.now(timeSingapore)
-    try:
-        clockVar2 = dt.datetime.now(pytz.timezone(timezoneMenu2.get()))
-        nowTime2 = clockVar2.strftime("%H:%M:%S")
-
-        guiClock2.config(text=nowTime2)
-        guiClock2.after(1000, clock2)
-    
-    except:
-        guiClock2.config(text="Placeholder 2")
-
-def clock3(timezoneMenu3):
-    try:   
-        clockVar3 = dt.datetime.now(pytz.timezone(timezoneMenu3.get()))
-        nowTime3 = clockVar3.strftime("%H:%M:%S")
-
-        guiClock3.config(text=nowTime3)
-        guiClock3.after(1000, clock3)
-
-    except:
-        guiClock3.config(text="Placeholder 3")
-
-def clock4(timezoneMenu4):
-    try:
-        clockVar4 = dt.datetime.now(pytz.timezone(timezoneMenu4.get()))
-        nowTime4 = clockVar4.strftime("%H:%M:%S")
-
-        guiClock4.config(text=nowTime4)
-        guiClock4.after(1000, clock4)
-
-    except:
-        guiClock4.config(text="Placeholder 4")
-
+        guiClock.after(1000, clock, y, guiClock)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 # WIDGET SECTION - LABELS, ENTRY AND BUTTON
@@ -142,6 +107,7 @@ timezoneMenu.grid(row=0,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
 
 timezoneMenu2 = tk.Entry(
     timeFrame,
+    textvariable=timezoneVar2,
     width=25,
     font=("Arial", 12)
 )
@@ -149,6 +115,7 @@ timezoneMenu2.grid(row=1,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
 
 timezoneMenu3 = tk.Entry(
     timeFrame,
+    textvariable=timezoneVar3,
     width=25,
     font=("Arial", 12)
 )
@@ -156,6 +123,7 @@ timezoneMenu3.grid(row=2,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
 
 timezoneMenu4 = tk.Entry(
     timeFrame,
+    textvariable=timezoneVar4,
     width=25,
     font=("Arial", 12)
 )
@@ -214,7 +182,7 @@ guiClock = tk.Label(
     )
 guiClock.grid(row=0,column=2,sticky="W,E,S,N",pady=2)
 # guiClock.pack() # .pack() required to add label
-clock(timezoneMenu)
+clock(timezoneMenu, guiClock)
 
 guiClock2 = tk.Label(
     timeFrame,
@@ -226,7 +194,7 @@ guiClock2 = tk.Label(
     font=("Arial", 14)
     )
 guiClock2.grid(row=1,column=2,sticky="W,E,S,N",pady=2) # .pack() required to add label
-clock2(timezoneMenu2)
+clock(timezoneMenu2, guiClock2)
 
 guiClock3 = tk.Label(
     timeFrame,
@@ -238,7 +206,7 @@ guiClock3 = tk.Label(
     font=("Arial", 14)
     )
 guiClock3.grid(row=2,column=2,sticky="W,E,S,N",pady=2) # .pack() required to add label
-clock3(timezoneMenu3)
+clock(timezoneMenu3, guiClock3)
 
 guiClock4 = tk.Label(
     timeFrame,
@@ -250,7 +218,7 @@ guiClock4 = tk.Label(
     font=("Arial", 14)
     )
 guiClock4.grid(row=3,column=2,sticky="W,E,S,N",pady=2) # .pack() required to add label
-clock4(timezoneMenu4)
+clock(timezoneMenu4, guiClock4)
 
 
 # tk.Label() - used to add text
