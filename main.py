@@ -18,8 +18,6 @@ import timezonefinder
 window = tk.Tk()
 # .title() sets the title of the gui
 window.title("Timezone Program")
-# window.geometry("1920x1080")
-
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 # FUNCTIONS
@@ -30,6 +28,10 @@ window.title("Timezone Program")
 def printEntry(x):
     output = x.get()
     return output
+
+# changeText function - uses argument to dynamically change text in a label ('y') to a string ('x')
+def changeText(y,x):
+    y.set(printEntry(x)) 
 
 timezoneList = [
     "Australia/Melbourne",
@@ -53,14 +55,9 @@ timezoneVar3.set(timezoneList[2])
 timezoneVar4 = tk.StringVar()
 timezoneVar4.set(timezoneList[3])
 
-# changeText function - uses argument to dynamically change text in a label using the above 'printEntry' function and 'nameEntry' var
-def changeText(y,x):
-    y.set(printEntry(x)) 
-
-# def selected(event):
-
-# test
-
+# clock function - clockVar grabs the current time and uses the input of 'y' to convert it to a timezone. nowtime converts that time into a HH:MM:SS format. 
+# it then configures the label inputted as argument 'guiClock' to nowTime, and updates every 100ms.
+# if something goes wrong, the text will change to "Placeholder", and check every 100ms for changes.
 def clock(y,guiClock):
     try:
         clockVar = dt.datetime.now(pytz.timezone(y.get()))
@@ -75,8 +72,9 @@ def clock(y,guiClock):
         guiClock.after(100, clock, y, guiClock)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
-# WIDGET SECTION - LABELS, ENTRY AND BUTTON
+# WIDGET SECTION
 
+# .Frame() and .LabelFrame() - for storing widgets, to organise grid section
 content = tk.Frame(
     window
 )
@@ -98,6 +96,7 @@ textFrame = tk.LabelFrame(
 )
 textFrame.grid(row=0,column=1,sticky="W,E,S,N")
 
+# timezoneMenus - entry fields that are used to input timezones for the displayed clocks
 timezoneMenu = tk.Entry(
     timeFrame,
     textvariable=timezoneVar,
@@ -130,6 +129,7 @@ timezoneMenu4 = tk.Entry(
 )
 timezoneMenu4.grid(row=3,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
 
+# timezoneButtons - buttons to submit entries in timezoneMenu fields. command changes the text of a label to input found in timezoneMenu
 timezoneButton = tk.Button(
     timeFrame,
     text="Submit",
@@ -170,7 +170,7 @@ timezoneButton4 = tk.Button(
     )
 timezoneButton4.grid(row=3,column=1,sticky="W,E,S,N",padx=(5),pady=(70,10)) # .pack() required to add button
 
-# tk.Label() - used to add text
+# guiClocks - labels that display the given clock() function below to display time converted to a timezone given from timezoneMenu fields
 guiClock = tk.Label(
     timeFrame,
     # textvariable=timezoneVar,
@@ -266,6 +266,7 @@ greet = tk.Label(
 greet.grid(row=2,column=3,sticky="W,E,S,N",pady=(10,0))
 # greet.pack() # .pack() required to add label
 
+# used to sort weighting/spacing of rows and columns inside frames
 timeFrame.rowconfigure(0,weight=1)
 timeFrame.rowconfigure(1,weight=1)
 timeFrame.rowconfigure(2,weight=1)
