@@ -68,11 +68,11 @@ def clock(y,guiClock):
 
         # guiClock.config(text=timezoneVar.get())
         guiClock.config(text=nowTime)
-        guiClock.after(1000, clock, y, guiClock)
+        guiClock.after(100, clock, y, guiClock)
     
     except:
         guiClock.config(text="Placeholder")
-        guiClock.after(1000, clock, y, guiClock)
+        guiClock.after(100, clock, y, guiClock)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 # WIDGET SECTION - LABELS, ENTRY AND BUTTON
