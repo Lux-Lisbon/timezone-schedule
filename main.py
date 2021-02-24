@@ -58,10 +58,6 @@ timezoneVar4.set(timezoneList[3])
 
 geoLocator = Nominatim(user_agent="tzs_request")
 
-# changeText function - uses argument to dynamically change text in a label using the above 'printEntry' function and 'nameEntry' var
-def changeText(y,x):
-    y.set(printEntry(x)) 
-
 # clock function - clockVar grabs the current time and uses the input of 'y' to convert it to a timezone. nowtime converts that time into a HH:MM:SS format. 
 # it then configures the label inputted as argument 'guiClock' to nowTime, and updates every 100ms.
 # if something goes wrong, the text will change to "Placeholder", and check every 100ms for changes.
