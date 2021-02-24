@@ -12,6 +12,7 @@ import datetime as dt
 import time
 import pytz
 import geopy
+from geopy.geocoders import Nominatim
 import timezonefinder
 
 # Tk() initialises a tkinter window
@@ -53,6 +54,8 @@ timezoneVar3.set(timezoneList[2])
 timezoneVar4 = tk.StringVar()
 timezoneVar4.set(timezoneList[3])
 
+geoLocator = Nominatim(user_agent="tzs_request")
+
 # changeText function - uses argument to dynamically change text in a label using the above 'printEntry' function and 'nameEntry' var
 def changeText(y,x):
     y.set(printEntry(x)) 
@@ -73,6 +76,21 @@ def clock(y,guiClock):
     except:
         guiClock.config(text="Placeholder")
         guiClock.after(1000, clock, y, guiClock)
+
+# set variable to return input from timezoneMenu entry
+# locationInput = printEntry(timezoneMenu)
+
+# applying geocode method to get location
+def getCoords(entry):
+    locationInput = printEntry(entry)
+    # applying geocode method to get the location
+    locVar = geoLocator.geocode(locationInput, timeout=1000)
+    print(locVar)
+    locLat = locVar.latitude
+    locLong = locVar.longitude
+    print(locLat)
+    print(locLong)
+
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 # WIDGET SECTION - LABELS, ENTRY AND BUTTON
@@ -100,6 +118,7 @@ textFrame.grid(row=0,column=1,sticky="W,E,S,N")
 
 timezoneMenu = tk.Entry(
     timeFrame,
+    text="Melbourne",
     textvariable=timezoneVar,
     width=25,
     font=("Arial", 12)
