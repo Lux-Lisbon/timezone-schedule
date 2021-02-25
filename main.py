@@ -13,7 +13,7 @@ import time
 import pytz
 import geopy
 from geopy.geocoders import Nominatim
-import timezonefinder
+from timezonefinder import TimezoneFinder
 
 # Tk() initialises a tkinter window
 window = tk.Tk()
@@ -77,16 +77,24 @@ def clock(y,guiClock):
 # set variable to return input from timezoneMenu entry
 # locationInput = printEntry(timezoneMenu)
 
-# applying geocode method to get location
 def getCoords(entry):
-    locationInput = printEntry(entry)
-    # applying geocode method to get the location
-    locVar = geoLocator.geocode(locationInput, timeout=1000)
-    print(locVar)
-    locLat = locVar.latitude
-    locLong = locVar.longitude
-    print(locLat)
-    print(locLong)
+    # assigns return of given entry
+    while True:
+        time.sleep(0.1)
+        locationInput = printEntry(entry)
+        # applying geocode method to get the location
+        locVar = geoLocator.geocode(locationInput, timeout=1000)
+        # print(locVar)
+        # using .latitude and .latitude methods to get coords of location
+        locLat = locVar.latitude
+        locLong = locVar.longitude
+        # print(locLat)
+        # print(locLong)
+        return [locLat, locLong]
+
+def getTZ(entry):
+    coordsList = getCoords(entry)
+    print(coordsList[0])
 
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -123,6 +131,7 @@ timezoneMenu = tk.Entry(
     font=("Arial", 12)
 )
 timezoneMenu.grid(row=0,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
+getTZ(timezoneMenu)
 
 timezoneMenu2 = tk.Entry(
     timeFrame,
