@@ -93,8 +93,14 @@ def getCoords(entry):
         return [locLat, locLong]
 
 def getTZ(entry):
-    coordsList = getCoords(entry)
-    print(coordsList[0])
+    while True:
+        time.sleep(0.1)
+        coordsList = getCoords(entry)
+        tf = TimezoneFinder()
+        locLat = coordsList[0]
+        locLong = coordsList[1]
+        tzFromCoords = tf.timezone_at(lng=locLong, lat=locLat)
+        return tzFromCoords
 
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -125,7 +131,6 @@ textFrame.grid(row=0,column=1,sticky="W,E,S,N")
 # timezoneMenus - entry fields that are used to input timezones for the displayed clocks
 timezoneMenu = tk.Entry(
     timeFrame,
-    text="Melbourne",
     textvariable=timezoneVar,
     width=25,
     font=("Arial", 12)
