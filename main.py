@@ -61,46 +61,45 @@ geoLocator = Nominatim(user_agent="tzs_request")
 # clock function - clockVar grabs the current time and uses the input of 'y' to convert it to a timezone. nowtime converts that time into a HH:MM:SS format. 
 # it then configures the label inputted as argument 'guiClock' to nowTime, and updates every 100ms.
 # if something goes wrong, the text will change to "Placeholder", and check every 100ms for changes.
-def clock(y,guiClock):
+def clock(y,guiClock,tz):
     try:
-        clockVar = dt.datetime.now(pytz.timezone(y.get()))
+        varTemp = getTZ(y)
+        clockVar = dt.datetime.now(pytz.timezone(varTemp))
         nowTime = clockVar.strftime("%H:%M:%S")
 
         # guiClock.config(text=timezoneVar.get())
         guiClock.config(text=nowTime)
-        guiClock.after(100, clock, y, guiClock)
+        # print("hello")
+        guiClock.after(100, clock, y, guiClock, tz)
     
     except:
         guiClock.config(text="Placeholder")
-        guiClock.after(100, clock, y, guiClock)
+        guiClock.after(100, clock, y, guiClock, tz)
 
 # set variable to return input from timezoneMenu entry
 # locationInput = printEntry(timezoneMenu)
 
 def getCoords(entry):
     # assigns return of given entry
-    while True:
-        time.sleep(0.1)
-        locationInput = printEntry(entry)
-        # applying geocode method to get the location
-        locVar = geoLocator.geocode(locationInput, timeout=1000)
-        # print(locVar)
-        # using .latitude and .latitude methods to get coords of location
-        locLat = locVar.latitude
-        locLong = locVar.longitude
-        # print(locLat)
-        # print(locLong)
-        return [locLat, locLong]
+    locationInput = printEntry(entry)
+    # applying geocode method to get the location
+    locVar = geoLocator.geocode(locationInput, timeout=1000)
+    print(locVar)
+    # using .latitude and .latitude methods to get coords of location
+    locLat = locVar.latitude
+    locLong = locVar.longitude
+    print(locLat)
+    print(locLong)
+    return [locLat, locLong]
 
 def getTZ(entry):
-    while True:
-        time.sleep(0.1)
-        coordsList = getCoords(entry)
-        tf = TimezoneFinder()
-        locLat = coordsList[0]
-        locLong = coordsList[1]
-        tzFromCoords = tf.timezone_at(lng=locLong, lat=locLat)
-        return tzFromCoords
+    coordsList = getCoords(entry)
+    tf = TimezoneFinder()
+    locLat = coordsList[0]
+    locLong = coordsList[1]
+    tzFromCoords = tf.timezone_at(lng=locLong, lat=locLat)
+    print(tzFromCoords)
+    return tzFromCoords
 
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -136,7 +135,7 @@ timezoneMenu = tk.Entry(
     font=("Arial", 12)
 )
 timezoneMenu.grid(row=0,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
-getTZ(timezoneMenu)
+# getTZ(timezoneMenu)
 
 timezoneMenu2 = tk.Entry(
     timeFrame,
@@ -216,7 +215,8 @@ guiClock = tk.Label(
     )
 guiClock.grid(row=0,column=2,sticky="W,E,S,N",pady=2)
 # guiClock.pack() # .pack() required to add label
-clock(timezoneMenu, guiClock)
+# tz = getTZ(timezoneMenu)
+clock(timezoneMenu, guiClock, getTZ(timezoneMenu))
 
 guiClock2 = tk.Label(
     timeFrame,
@@ -228,7 +228,7 @@ guiClock2 = tk.Label(
     font=("Arial", 14)
     )
 guiClock2.grid(row=1,column=2,sticky="W,E,S,N",pady=2) # .pack() required to add label
-clock(timezoneMenu2, guiClock2)
+# clock(timezoneMenu2, guiClock2)
 
 guiClock3 = tk.Label(
     timeFrame,
@@ -240,7 +240,7 @@ guiClock3 = tk.Label(
     font=("Arial", 14)
     )
 guiClock3.grid(row=2,column=2,sticky="W,E,S,N",pady=2) # .pack() required to add label
-clock(timezoneMenu3, guiClock3)
+# clock(timezoneMenu3, guiClock3)
 
 guiClock4 = tk.Label(
     timeFrame,
@@ -252,7 +252,7 @@ guiClock4 = tk.Label(
     font=("Arial", 14)
     )
 guiClock4.grid(row=3,column=2,sticky="W,E,S,N",pady=2) # .pack() required to add label
-clock(timezoneMenu4, guiClock4)
+# clock(timezoneMenu4, guiClock4)
 
 
 # tk.Label() - used to add text
