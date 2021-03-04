@@ -58,23 +58,32 @@ timezoneVar4.set(timezoneList[3])
 
 geoLocator = Nominatim(user_agent="tzs_request")
 
+def clockButtonPress(y,text):
+    clockButtonPress.timezoneRetriever = getTZ(y)
+    guiClock.config(text=text)
+    # guiClock.after(100, clock, y, guiClock, button)
+
+def assignVar(y):
+    tz = getTZ(y)
+    return tz
+
 # clock function - clockVar grabs the current time and uses the input of 'y' to convert it to a timezone. nowtime converts that time into a HH:MM:SS format. 
 # it then configures the label inputted as argument 'guiClock' to nowTime, and updates every 100ms.
 # if something goes wrong, the text will change to "Placeholder", and check every 100ms for changes.
-def clock(y,guiClock,tz):
+def clock(y,guiClock,button,tz):
     try:
-        varTemp = getTZ(y)
-        clockVar = dt.datetime.now(pytz.timezone(varTemp))
+        # clockButtonPress(y,varTemp2)
+        clockVar = dt.datetime.now(pytz.timezone(tz))
         nowTime = clockVar.strftime("%H:%M:%S")
-
-        # guiClock.config(text=timezoneVar.get())
-        guiClock.config(text=nowTime)
-        # print("hello")
-        guiClock.after(100, clock, y, guiClock, tz)
+        
+        # guiClock.after(100, clock, y, guiClock, button)
+        button.config(command=lambda: )
+        guiClock.after(100, clock, y, guiClock, button, getTz(y))
     
     except:
         guiClock.config(text="Placeholder")
-        guiClock.after(100, clock, y, guiClock, tz)
+        guiClock.after(100, clock, y, guiClock, button)
+
 
 # set variable to return input from timezoneMenu entry
 # locationInput = printEntry(timezoneMenu)
@@ -166,7 +175,7 @@ timezoneButton = tk.Button(
     timeFrame,
     text="Submit",
     # command=lambda: print(printEntry(nameEntry)),
-    command=lambda: changeText(timezoneVar,timezoneMenu),
+    command="",
     width=25,
     height=2
     )
@@ -216,7 +225,7 @@ guiClock = tk.Label(
 guiClock.grid(row=0,column=2,sticky="W,E,S,N",pady=2)
 # guiClock.pack() # .pack() required to add label
 # tz = getTZ(timezoneMenu)
-clock(timezoneMenu, guiClock, getTZ(timezoneMenu))
+clock(timezoneMenu, guiClock, timezoneButton)
 
 guiClock2 = tk.Label(
     timeFrame,
