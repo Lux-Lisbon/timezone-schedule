@@ -14,17 +14,15 @@ import pytz
 import geopy
 from geopy.geocoders import Nominatim
 from timezonefinder import TimezoneFinder
-from replit import db
 
-
+# Tk() initialises a tkinter window
 window = tk.Tk()
+# .title() sets the title of the gui
 window.title("Timezone Program")
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 # FUNCTIONS
 
-
-print("nooooo waaayyyyyy")
 
 # printEntry() function - uses .get() func to retrieve input from (x); an argument defined per use
 # assigns input of 'x' (from an entry widget) to 'output' and returns output
@@ -49,6 +47,15 @@ nameVar = tk.StringVar()
 timezoneVar = tk.StringVar()
 timezoneVar.set(timezoneList[0])
 
+timezoneVar2 = tk.StringVar()
+timezoneVar2.set(timezoneList[1])
+
+timezoneVar3 = tk.StringVar()
+timezoneVar3.set(timezoneList[2])
+
+timezoneVar4 = tk.StringVar()
+timezoneVar4.set(timezoneList[3])
+
 geoLocator = Nominatim(user_agent="tzs_request")
 
 def clockButtonPress(y,text):
@@ -56,28 +63,26 @@ def clockButtonPress(y,text):
     guiClock.config(text=text)
     # guiClock.after(100, clock, y, guiClock, button)
 
+def assignVar(y):
+    tz = getTZ(y)
+    return tz
 
-def clock(guiClock):
-    #global currentTimezone
-    #currentTimeZone = "Europe/Paris"
+# clock function - clockVar grabs the current time and uses the input of 'y' to convert it to a timezone. nowtime converts that time into a HH:MM:SS format. 
+# it then configures the label inputted as argument 'guiClock' to nowTime, and updates every 100ms.
+# if something goes wrong, the text will change to "Placeholder", and check every 100ms for changes.
+def clock(y,guiClock,button,tz):
     try:
         # clockButtonPress(y,varTemp2)
-        #tz = getTZ(entryWidget)
-        #print("currentTimeZone2", currentTimeZone)
-        #clockVar = dt.datetime.now(pytz.timezone(ct))
-        clockVar = dt.datetime.now(pytz.timezone(db["currentTimeZone"]))
+        clockVar = dt.datetime.now(pytz.timezone(tz))
         nowTime = clockVar.strftime("%H:%M:%S")
         
         # guiClock.after(100, clock, y, guiClock, button)
-        #print("here???", nowTime)
-        guiClock.config(text=nowTime)
-        #print("!!!")
-        guiClock.after(100, clock, guiClock)
+        button.config(command=lambda: )
+        guiClock.after(100, clock, y, guiClock, button, getTz(y))
     
     except:
-        print("exepppt")
-        guiClock.after(100, clock, guiClock)
-        #guiClock.after(100, clock, y, guiClock, button)
+        guiClock.config(text="Placeholder")
+        guiClock.after(100, clock, y, guiClock, button)
 
 
 # set variable to return input from timezoneMenu entry
@@ -88,12 +93,12 @@ def getCoords(entry):
     locationInput = printEntry(entry)
     # applying geocode method to get the location
     locVar = geoLocator.geocode(locationInput, timeout=1000)
-    #print(locVar)
+    print(locVar)
     # using .latitude and .latitude methods to get coords of location
     locLat = locVar.latitude
     locLong = locVar.longitude
-    #print(locLat)
-    #print(locLong)
+    print(locLat)
+    print(locLong)
     return [locLat, locLong]
 
 def getTZ(entry):
@@ -103,9 +108,6 @@ def getTZ(entry):
     locLong = coordsList[1]
     tzFromCoords = tf.timezone_at(lng=locLong, lat=locLat)
     print(tzFromCoords)
-    #currentTimeZone = tzFromCoords
-    db["currentTimeZone"] = tzFromCoords
-    print("currentTimeZone1", db["currentTimeZone"])
     return tzFromCoords
 
 
@@ -144,7 +146,29 @@ timezoneMenu = tk.Entry(
 timezoneMenu.grid(row=0,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
 # getTZ(timezoneMenu)
 
+timezoneMenu2 = tk.Entry(
+    timeFrame,
+    textvariable=timezoneVar2,
+    width=25,
+    font=("Arial", 12)
+)
+timezoneMenu2.grid(row=1,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
 
+timezoneMenu3 = tk.Entry(
+    timeFrame,
+    textvariable=timezoneVar3,
+    width=25,
+    font=("Arial", 12)
+)
+timezoneMenu3.grid(row=2,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
+
+timezoneMenu4 = tk.Entry(
+    timeFrame,
+    textvariable=timezoneVar4,
+    width=25,
+    font=("Arial", 12)
+)
+timezoneMenu4.grid(row=3,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
 
 # timezoneButtons - buttons to submit entries in timezoneMenu fields. command changes the text of a label to input found in timezoneMenu
 timezoneButton = tk.Button(
@@ -157,6 +181,35 @@ timezoneButton = tk.Button(
     )
 timezoneButton.grid(row=0,column=1,sticky="W,E,S,N",padx=(5),pady=(70,10)) # .pack() required to add button
 
+timezoneButton2 = tk.Button(
+    timeFrame,
+    text="Submit",
+    # command=lambda: print(printEntry(nameEntry)),
+    command=lambda: changeText(timezoneVar2,timezoneMenu2),
+    width=25,
+    height=2
+    )
+timezoneButton2.grid(row=1,column=1,sticky="W,E,S,N",padx=(5),pady=(70,10)) # .pack() required to add button
+
+timezoneButton3 = tk.Button(
+    timeFrame,
+    text="Submit",
+    # command=lambda: print(printEntry(nameEntry)),
+    command=lambda: changeText(timezoneVar3,timezoneMenu3),
+    width=25,
+    height=2
+    )
+timezoneButton3.grid(row=2,column=1,sticky="W,E,S,N",padx=(5),pady=(70,10)) # .pack() required to add button
+
+timezoneButton4 = tk.Button(
+    timeFrame,
+    text="Submit",
+    # command=lambda: print(printEntry(nameEntry)),
+    command=lambda: changeText(timezoneVar4,timezoneMenu4),
+    width=25,
+    height=2
+    )
+timezoneButton4.grid(row=3,column=1,sticky="W,E,S,N",padx=(5),pady=(70,10)) # .pack() required to add button
 
 # guiClocks - labels that display the given clock() function below to display time converted to a timezone given from timezoneMenu fields
 guiClock = tk.Label(
@@ -172,13 +225,88 @@ guiClock = tk.Label(
 guiClock.grid(row=0,column=2,sticky="W,E,S,N",pady=2)
 # guiClock.pack() # .pack() required to add label
 # tz = getTZ(timezoneMenu)
-tz = getTZ(timezoneMenu)
-#getTZ(timezoneMenu)
-timezoneButton.config(command=lambda: getTZ(timezoneMenu))
-#root.after(5000, root.destroy)
+clock(timezoneMenu, guiClock, timezoneButton)
 
-#print(currentTimeZone)
+guiClock2 = tk.Label(
+    timeFrame,
+    text="",
+    bg="black",
+    fg="white",
+    width=30,
+    height=5,
+    font=("Arial", 14)
+    )
+guiClock2.grid(row=1,column=2,sticky="W,E,S,N",pady=2) # .pack() required to add label
+# clock(timezoneMenu2, guiClock2)
 
+guiClock3 = tk.Label(
+    timeFrame,
+    text="",
+    bg="black",
+    fg="white",
+    width=30,
+    height=5,
+    font=("Arial", 14)
+    )
+guiClock3.grid(row=2,column=2,sticky="W,E,S,N",pady=2) # .pack() required to add label
+# clock(timezoneMenu3, guiClock3)
+
+guiClock4 = tk.Label(
+    timeFrame,
+    text="",
+    bg="black",
+    fg="white",
+    width=30,
+    height=5,
+    font=("Arial", 14)
+    )
+guiClock4.grid(row=3,column=2,sticky="W,E,S,N",pady=2) # .pack() required to add label
+# clock(timezoneMenu4, guiClock4)
+
+
+# tk.Label() - used to add text
+namePrompt = tk.Label(
+    textFrame,
+    text="Please enter your name below.",
+    width=32,
+    font=("Arial", 14)
+    )
+namePrompt.grid(row=0,column=3,sticky="W,E,S,N",pady=2) # .pack() required to add label
+
+
+# tk.Entry() - used to let user input data
+nameEntry = tk.Entry(
+    textFrame,
+    width=25,
+    font=("Arial", 12)
+    )
+nameEntry.grid(row=1,column=3,sticky="W,E,S,N",pady=(0,80),padx=(10)) # .pack() required to add entry
+
+
+# tk.Button() - used to add a clickable button
+button = tk.Button(
+    textFrame,
+    text="Submit",
+    # command=lambda: print(printEntry(nameEntry)),
+    command=lambda: changeText(nameVar,nameEntry),
+    width=25,
+    height=2
+    )
+button.grid(row=1,column=3,sticky="W,E,S,N",pady=(60,0),padx=(10)) # .pack() required to add button
+
+
+# tk.Label() - used to add text
+greet = tk.Label(
+    textFrame,
+    textvariable=nameVar,
+    bg="black", 
+    fg="white",
+    width=30,
+    height=15,
+    font=("Arial", 14)
+    )
+greet.grid(row=2,column=3,sticky="W,E,S,N",pady=(10,0))
+# greet.pack() # .pack() required to add label
 
 # used to sort weighting/spacing of rows and columns inside frames
 timeFrame.rowconfigure(0,weight=1)
@@ -187,15 +315,5 @@ timeFrame.rowconfigure(2,weight=1)
 timeFrame.rowconfigure(3,weight=1)
 timeFrame.columnconfigure(1, weight=1)
 timeFrame.columnconfigure(2, weight=2)
-
-
-clock(guiClock)
 # MAIN LOOP - starts the window
 window.mainloop()
-
-# i=0
-# while (i<200):
-#   clock(currentTimeZone, guiClock)
-#   time.sleep(1)
-#   i = i + 1
-#   #clock(timezoneMenu, guiClock, timezoneButton)
