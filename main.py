@@ -176,7 +176,7 @@ timezoneButton2 = tk.Button(
     )
 timezoneButton2.grid(row=1,column=1,sticky="W,E,S,N",padx=(5),pady=(70,10)) # .pack() required to add button
 
-def makeGuiClockWrapper(tzButton, rownum, tz):
+def makeGuiClockWrapper(tzButton, rownum, tz, timezoneMenu):
   guiClock = tk.Label(
       timeFrame,
       text="",
@@ -191,38 +191,29 @@ def makeGuiClockWrapper(tzButton, rownum, tz):
   return guiClock
 
 
-# guiClocks - labels that display the given clock() function below to display time converted to a timezone given from timezoneMenu fields
-guiClock = tk.Label(
-    timeFrame,
-    # textvariable=timezoneVar,
-    text="",
-    bg="black",
-    fg="white",
-    width=30,
-    height=5,
-    font=("Arial", 14)
-    )
-guiClock.grid(row=0,column=2,sticky="W,E,S,N",pady=2)
-# guiClock.pack() # .pack() required to add label
-# tz = getTZ(timezoneMenu)
-# tz = getTZ(timezoneMenu)
-#getTZ(timezoneMenu)
-timezoneButton.config(command=lambda: getTZ(timezoneMenu,"tzVar1"))
-#root.after(5000, root.destroy)
+# guiClock = tk.Label(
+#     timeFrame,
+#     text="",
+#     bg="black",
+#     fg="white",
+#     width=30,
+#     height=5,
+#     font=("Arial", 14)
+#     )
+# guiClock.grid(row=0,column=2,sticky="W,E,S,N",pady=2)
+# timezoneButton.config(command=lambda: getTZ(timezoneMenu,"tzVar1"))
 
-guiClock2 = tk.Label(
-    timeFrame,
-    # textvariable=timezoneVar,
-    text="",
-    bg="black",
-    fg="white",
-    width=30,
-    height=5,
-    font=("Arial", 14)
-    )
-guiClock2.grid(row=1,column=2,sticky="W,E,S,N",pady=2)
-timezoneButton2.config(command=lambda: getTZ(timezoneMenu2,"tzVar2"))
-#print(currentTimeZone)
+# guiClock2 = tk.Label(
+#     timeFrame,
+#     text="",
+#     bg="black",
+#     fg="white",
+#     width=30,
+#     height=5,
+#     font=("Arial", 14)
+#     )
+# guiClock2.grid(row=1,column=2,sticky="W,E,S,N",pady=2)
+# timezoneButton2.config(command=lambda: getTZ(timezoneMenu2,"tzVar2"))
 
 
 # used to sort weighting/spacing of rows and columns inside frames
@@ -234,7 +225,8 @@ timeFrame.columnconfigure(1, weight=1)
 timeFrame.columnconfigure(2, weight=2)
 
 
-clock(makeGuiClockWrapper(timezoneButton,0,"tzVar1"), "tzVar1")
+clock(makeGuiClockWrapper(timezoneButton,0,"tzVar1",timezoneMenu), "tzVar1")
+clock(makeGuiClockWrapper(timezoneButton2,1,"tzVar2",timezoneMenu2), "tzVar2")
 # clock(guiClock2,"tzVar2")
 # clock(guiClock,"tzVar1")
 # clock(guiClock2,"tzVar2")
