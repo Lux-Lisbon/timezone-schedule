@@ -138,43 +138,26 @@ textFrame = tk.LabelFrame(
 textFrame.grid(row=0,column=1,sticky="W,E,S,N")
 
 # timezoneMenus - entry fields that are used to input timezones for the displayed clocks
-timezoneMenu = tk.Entry(
-    timeFrame,
-    textvariable=timezoneVar,
-    width=25,
-    font=("Arial", 12)
-)
-timezoneMenu.grid(row=0,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
-# getTZ(timezoneMenu)
-
-timezoneMenu2 = tk.Entry(
-    timeFrame,
-    textvariable=timezoneVar2,
-    width=25,
-    font=("Arial", 12)
-)
-timezoneMenu2.grid(row=1,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
-
-# timezoneButtons - buttons to submit entries in timezoneMenu fields. command changes the text of a label to input found in timezoneMenu
-timezoneButton = tk.Button(
-    timeFrame,
-    text="Submit",
-    # command=lambda: print(printEntry(nameEntry)),
-    command="",
-    width=25,
-    height=2
+def makeTimezoneMenu(rownum,timezoneVar):
+  timezoneMenu = tk.Entry(
+      timeFrame,
+      textvariable=timezoneVar,
+      width=25,
+      font=("Arial", 12)
     )
-timezoneButton.grid(row=0,column=1,sticky="W,E,S,N",padx=(5),pady=(70,10)) # .pack() required to add button
+  timezoneMenu.grid(row=rownum,column=1,sticky="W,E,S,N",padx=5,pady=(2,70))
+  return timezoneMenu
 
-timezoneButton2 = tk.Button(
-    timeFrame,
-    text="Submit",
-    # command=lambda: print(printEntry(nameEntry)),
-    command="",
-    width=25,
-    height=2
+def makeTimezoneButton(rownum):
+  timezoneButton = tk.Button(
+      timeFrame,
+      text="Submit",
+      command="",
+      width=25,
+      height=2
     )
-timezoneButton2.grid(row=1,column=1,sticky="W,E,S,N",padx=(5),pady=(70,10)) # .pack() required to add button
+  timezoneButton.grid(row=rownum,column=1,sticky="W,E,S,N",padx=(5),pady=(70,10))
+  return timezoneButton
 
 def makeGuiClockWrapper(tzButton, rownum, tz, timezoneMenu):
   guiClock = tk.Label(
@@ -190,32 +173,8 @@ def makeGuiClockWrapper(tzButton, rownum, tz, timezoneMenu):
   tzButton.config(command=lambda: getTZ(timezoneMenu,tz))
   return guiClock
 
-
-# guiClock = tk.Label(
-#     timeFrame,
-#     text="",
-#     bg="black",
-#     fg="white",
-#     width=30,
-#     height=5,
-#     font=("Arial", 14)
-#     )
-# guiClock.grid(row=0,column=2,sticky="W,E,S,N",pady=2)
-# timezoneButton.config(command=lambda: getTZ(timezoneMenu,"tzVar1"))
-
-# guiClock2 = tk.Label(
-#     timeFrame,
-#     text="",
-#     bg="black",
-#     fg="white",
-#     width=30,
-#     height=5,
-#     font=("Arial", 14)
-#     )
-# guiClock2.grid(row=1,column=2,sticky="W,E,S,N",pady=2)
-# timezoneButton2.config(command=lambda: getTZ(timezoneMenu2,"tzVar2"))
-
-
+timezoneMenu = makeTimezoneMenu(0,timezoneVar)
+timezoneMenu2 = makeTimezoneMenu(1,timezoneVar2)
 # used to sort weighting/spacing of rows and columns inside frames
 timeFrame.rowconfigure(0,weight=1)
 timeFrame.rowconfigure(1,weight=1)
@@ -225,17 +184,8 @@ timeFrame.columnconfigure(1, weight=1)
 timeFrame.columnconfigure(2, weight=2)
 
 
-clock(makeGuiClockWrapper(timezoneButton,0,"tzVar1",timezoneMenu), "tzVar1")
-clock(makeGuiClockWrapper(timezoneButton2,1,"tzVar2",timezoneMenu2), "tzVar2")
-# clock(guiClock2,"tzVar2")
-# clock(guiClock,"tzVar1")
-# clock(guiClock2,"tzVar2")
+clock(makeGuiClockWrapper(makeTimezoneButton(0),0,"tzVar1",timezoneMenu), "tzVar1")
+clock(makeGuiClockWrapper(makeTimezoneButton(1),1,"tzVar2",timezoneMenu2), "tzVar2")
+
 # MAIN LOOP - starts the window
 window.mainloop()
-
-# i=0
-# while (i<200):
-#   clock(currentTimeZone, guiClock)
-#   time.sleep(1)
-#   i = i + 1
-#   #clock(timezoneMenu, guiClock, timezoneButton)
