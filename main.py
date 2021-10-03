@@ -33,6 +33,14 @@ timezoneList2 = [
     "China", "London", "Amsterdam"
 ]
 
+formEntryList = [
+    db["profiles"][0]["name"],
+    db["profiles"][0]["business"],
+    db["profiles"][0]["timezones"][0], 
+    db["profiles"][0]["timezones"][1], 
+    db["profiles"][0]["timezones"][2]
+]
+
 # add profile function 
 # find len of profiles and add to db[2] etc
 
@@ -40,16 +48,17 @@ profiles = [
   {
     "name": "Default",
     "business": "Default Business",
-    "groups": ["Australia/Melbourne", "Asia/Singapore"]
+    "timezones": ["Australia/Melbourne", "Asia/Singapore", "Italy"]
   },
   {
     "name": "Custom",
     "business": "Custom Business",
-    "groups": ["Australia/Sydney", "Australia/Melbourne"]
+    "timezones": ["Australia/Sydney", "Australia/Melbourne", "Australia/Darwin"]
   }
 ]
 db["profiles"] = profiles
-print(db["profiles"][0]["name"])
+
+# print(db["profiles"][0]["name"])
 
 # variable using tk.StringVar() to dynamically change string
 nameVar = tk.StringVar()
@@ -61,6 +70,42 @@ timezoneVar2 = tk.StringVar()
 timezoneVar2.set(timezoneList[1])
 timezoneVar3 = tk.StringVar()
 timezoneVar3.set(timezoneList[2])
+
+# entry vars
+formEntryVar = tk.StringVar()
+formEntryVar.set(formEntryList[0])
+formEntryVar2 = tk.StringVar()
+formEntryVar2.set(formEntryList[1])
+formEntryVar3 = tk.StringVar()
+formEntryVar3.set(formEntryList[2])
+formEntryVar4 = tk.StringVar()
+formEntryVar4.set(formEntryList[3])
+formEntryVar5 = tk.StringVar()
+formEntryVar5.set(formEntryList[4])
+
+
+def profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5):
+
+    profiles[0]["name"] = printEntry(formEntry)
+    profiles[0]["business"] = printEntry(formEntry2)
+    profiles[0]["timezones"][0] = printEntry(formEntry3)
+    profiles[0]["timezones"][1] = printEntry(formEntry4)
+    profiles[0]["timezones"][2] = printEntry(formEntry5)
+    db["profiles"] = profiles
+    print(db["profiles"],"\n\n\n",profiles)
+    keys = db.keys()
+    print(keys)
+
+# profileNameVar = tk.StringVar()
+# profileNameVar.set(db["profiles"][0]["name"])
+# profileBusinessVar = tk.StringVar()
+# profileBusinessVar.set(db["profiles"][0]["business"])
+# profileTZ1Var = tk.StringVar()
+# profileTZ1Var.set(db["profiles"][0]["timezones"][0])
+# profileTZ2Var = tk.StringVar()
+# profileTZ2Var.set(db["profiles"][0]["timezones"][1])
+# profileTZ3Var = tk.StringVar()
+# profileTZ3Var.set(db["profiles"][0]["timezones"][2])
 
 # creation of custom Nominatim user agent, to avoid violation of usage policy, and HTTP errors
 geoLocator = Nominatim(user_agent="tzs_request")
@@ -103,16 +148,16 @@ def getTZ(entry, currentTimeZone):
     print(currentTimeZone, db[currentTimeZone])
     return tzFromCoords
 
-def profileTZSet(value1,value2,value3,timezoneMenu,timezoneMenu2,timezoneMenu3,tz,tz2,tz3):
-    # db["tzVar1"] = value1
-    # db["tzVar2"] = value2
-    # db["tzVar3"] = value3
-    timezoneVar.set(timezoneList2[0])
-    timezoneVar2.set(timezoneList2[1])
-    timezoneVar3.set(timezoneList2[2])
-    getTZ(timezoneMenu, tz)
-    getTZ(timezoneMenu2, tz2)
-    getTZ(timezoneMenu3, tz3)
+def profileTZSet(timezoneMenu,timezoneMenu2,timezoneMenu3,tz,tz2,tz3,sampleList,num1,num2,num3):
+    try:
+        timezoneVar.set(sampleList[num1])
+        timezoneVar2.set(sampleList[num2])
+        timezoneVar3.set(sampleList[num3])
+        getTZ(timezoneMenu, tz)
+        getTZ(timezoneMenu2, tz2)
+        getTZ(timezoneMenu3, tz3)
+    except:
+        print("Try another location/timezone!")
 
 
 
@@ -120,13 +165,109 @@ def profileTZSet(value1,value2,value3,timezoneMenu,timezoneMenu2,timezoneMenu3,t
 
 # .Frame() and .LabelFrame() - for storing widgets, to organise grid section
 content = tk.Frame(window)
-content.grid(sticky="W,E,S,N")
+content.grid(row=0, column=0, sticky="W,E,S,N")
 
 menuFrame = tk.LabelFrame(content, text="", padx=5, pady=5)
 menuFrame.grid(row=0, column=0, sticky="W,E,S,N")
 
 timeFrame = tk.LabelFrame(content, text="", padx=5, pady=5)
 timeFrame.grid(row=1, column=0, sticky="W,E,S,N")
+
+def createNewWindow():
+    newWindow = tk.Toplevel(window)
+
+    formHeading = tk.LabelFrame(newWindow, text="Testing", padx=5, pady=5)
+    formHeading.grid(row=0, column=0, sticky="W,E,S,N")
+
+    formForm = tk.LabelFrame(newWindow, text="", padx=10, pady=10)
+    formForm.grid(row=1, column=0, sticky="W,E,S,N")
+
+    formFooter = tk.LabelFrame(newWindow, text="", padx=10, pady=10)
+    formFooter.grid(row=2, column=0, sticky="W,E,S,N")
+
+    def formLabelWrapper(rownum,sampleText,frameVar):
+        formLabel = tk.Label(
+              frameVar,
+              text=sampleText,
+              font=("Arial", 12))
+        # packs label to the grid
+        formLabel.grid(
+              row=rownum,
+              column=1, 
+              sticky="W,E,S,N", 
+              pady=10)
+        return formLabel
+
+    def formEntryWrapper(rownum,formTextVar):
+    # creation and properties of entry widget
+        formMenu = tk.Entry(
+            formForm,
+            textvariable=formTextVar,
+            width=25,
+            font=("Arial", 12))
+        # packs entry field to the grid
+        formMenu.grid(
+            row=rownum,
+            column=2,
+            sticky="W,E,S,N",
+            padx=5,
+            pady=(10))
+        return formMenu
+
+    def formApplyButtonWrapper(rownum,colnum,tM,tM2,tM3,tz,tz2,tz3):
+        formButton = tk.Button(
+            formFooter,
+            text="Apply",
+            command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,formEntryList,2,3,4),
+            width=15,
+            height=2)
+        # packs button to the grid
+        formButton.grid(
+            row=rownum,
+            column=colnum,
+            sticky="W,E,S,N",
+            padx=(5),
+            pady=(10, 10))
+        return formButton
+
+    def formExportButtonWrapper(rownum,colnum):
+        formButton = tk.Button(
+            formFooter,
+            text="Download",
+            command=lambda: profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5),
+            width=15,
+            height=2)
+        # packs button to the grid
+        formButton.grid(
+            row=rownum,
+            column=colnum,
+            sticky="W,E,S,N",
+            padx=(5),
+            pady=(10, 10))
+        return formButton
+
+    formLabelWrapper(0,"Name:",formForm)
+    formLabelWrapper(1,"Business:",formForm)
+    formLabelWrapper(2,"Timezone 1:",formForm)
+    formLabelWrapper(3,"Timezone 2:",formForm)
+    formLabelWrapper(4,"Timezone 3:",formForm)
+    # formEntry = formEntryWrapper(0,formEntryVar)
+    formEntry = formEntryWrapper(0,formEntryVar)
+    formEntry2 = formEntryWrapper(1,formEntryVar2)
+    formEntry3 = formEntryWrapper(2,formEntryVar3)
+    formEntry4 = formEntryWrapper(3,formEntryVar4)
+    formEntry5 = formEntryWrapper(4,formEntryVar5)
+
+    # db["profiles"][0]["name"] = printEntry(formEntry)
+    # db["profiles"][0]["business"] = printEntry(formEntry2)
+    # db["profiles"][0]["timezones"][0] = printEntry(formEntry3)
+    # db["profiles"][0]["timezones"][1] = printEntry(formEntry4)
+    # db["profiles"][0]["timezones"][2] = printEntry(formEntry5)
+
+    # formEntryWrapper(4,"Enter Timezone 3")
+    formApplyButtonWrapper(0,1,formEntry3,formEntry4,formEntry5,"tzVar1","tzVar2","tzVar3")
+    formExportButtonWrapper(0,2)
+
 
 # textFrame = tk.LabelFrame(content, text="", padx=5, pady=5)
 # textFrame.grid(row=0, column=1, sticky="W,E,S,N")
@@ -187,11 +328,14 @@ def makeGuiClockWrapper(tzButton, rownum, tz, timezoneMenu):
     tzButton.config(command=lambda: getTZ(timezoneMenu, tz))
     return guiClock
 
+# --------------------------------------------------
+# Menu Header
+
 def addProfileWrapper(tM,tM2,tM3,tz,tz2,tz3):
     addProfileButton = tk.Button(
         menuFrame,
-        text="Set Profile",
-        command=lambda: profileTZSet(timezoneList2[0],timezoneList2[1],timezoneList2[2],tM,tM2,tM3,tz,tz2,tz3),
+        text="Set Profile to Default",
+        command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,timezoneList2,0,1,2),
         width=25,
         height=2
       )
@@ -204,21 +348,46 @@ def addProfileWrapper(tM,tM2,tM3,tz,tz2,tz3):
         pady=(10, 10)
       )
 
+newWindow = tk.Button(
+    menuFrame,
+    text="Create New Profile",
+    command=lambda: createNewWindow(),
+    width=25,
+    height=2
+  )
+# packs button to the grid
+newWindow.grid(
+    row=0,
+    column=2,
+    sticky="W,E,S,N",
+    padx=(5),
+    pady=(10, 10)
+  )
+
 
 # timezoneMenus - entry fields that are used to input timezones for the displayed clocks, used as variables for clock functions below
 timezoneMenu = makeTimezoneMenu(1, timezoneVar)
 timezoneMenu2 = makeTimezoneMenu(2, timezoneVar2)
 timezoneMenu3 = makeTimezoneMenu(3, timezoneVar3)
+# print(timezoneMenu,timezoneMenu2,timezoneMenu3)
 
 # used to sort weighting/spacing of rows and columns inside frames
+# sort this out
 content.rowconfigure(0, weight=1)
-content.columnconfigure(0, weight=1)
+content.rowconfigure(1, weight=3)
 timeFrame.rowconfigure(0, weight=1)
 timeFrame.rowconfigure(1, weight=1)
 timeFrame.rowconfigure(2, weight=1)
 timeFrame.rowconfigure(3, weight=1)
 timeFrame.columnconfigure(1, weight=1)
 timeFrame.columnconfigure(2, weight=2)
+newWindow.rowconfigure(0, weight=2)
+newWindow.rowconfigure(1, weight=1)
+newWindow.rowconfigure(2, weight=1)
+newWindow.rowconfigure(3, weight=1)
+newWindow.rowconfigure(4, weight=1)
+newWindow.columnconfigure(0, weight=1)
+newWindow.columnconfigure(1, weight=1)
 
 # run clock functions, creating labels and buttons
 clock(makeGuiClockWrapper(makeTimezoneButton(1), 1, "tzVar1", timezoneMenu), "tzVar1")
