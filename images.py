@@ -3,7 +3,14 @@ import tkinter.ttk
 from PIL import Image
 from PIL import ImageTk
 
+def imageDefine(location):
+    img = Image.open("{}".format(location))
+    img = img.resize((25,25), Image.ANTIALIAS)
+    photo = ImageTk.PhotoImage(img)
+    return photo
 # Creating a photoimage object to use image
-img = Image.open("profile.png")
-img = img.resize((25,25), Image.ANTIALIAS)
-profilesPhoto = ImageTk.PhotoImage(img)
+
+
+profileIcon = imageDefine("imageFolder/profile.png")
+uploadIcon = imageDefine("imageFolder/upload.png")
+downloadIcon = imageDefine("imageFolder/download.png")

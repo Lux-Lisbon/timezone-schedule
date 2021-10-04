@@ -46,6 +46,8 @@ formEntryList = [
     db["profiles"][0]["timezones"][2]
 ]
 
+dataList = []
+
 # add profile function 
 # find len of profiles and add to db[2] etc
 
@@ -62,7 +64,6 @@ profiles = [
   }
 ]
 db["profiles"] = profiles
-print(len(profiles))
 
 
 # variable using tk.StringVar() to dynamically change string
@@ -90,7 +91,6 @@ formEntryVar5.set(formEntryList[4])
 
 
 def profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5):
-
     try:
         profiles[0]["name"] = printEntry(formEntry)
         profiles[0]["business"] = printEntry(formEntry2)
@@ -108,6 +108,39 @@ def profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5
     except:
         print("Please Try Again!")
         messagebox.showerror("Error","There was an error in saving your preferences as a JSON file.")
+
+def readAndReturn(jsonFileName):
+    with open('{}.json'.format(jsonFileName), 'r') as f:
+        data = json.load(f)
+
+    return data
+
+def readAndReplace(profileNum,jsonFileName):
+    try:
+        with open('{}.json'.format(jsonFileName), 'r') as f:
+            data = json.load(f)
+
+        formEntryVar.set(data[profileNum]["name"])
+        formEntryVar2.set(data[profileNum]["business"])
+        formEntryVar3.set(data[profileNum]["timezones"][0])
+        formEntryVar4.set(data[profileNum]["timezones"][1])
+        formEntryVar5.set(data[profileNum]["timezones"][2])
+    except:
+        print("Please Try Again!")
+        messagebox.showerror("Error","There was an error in loading your preferences. Please try a different file name!")
+
+def writeReadReplace(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum,jsonFileName):
+    profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5)
+    readAndReplace(profileNum,jsonFileName)
+
+def createProfileNameList(jsonFileName):
+    data = readAndReturn(jsonFileName)
+    print(data)
+    numOfProfiles = len(data)
+    for x in range(numOfProfiles):
+        dataList.append(data[x]["name"])
+
+createProfileNameList("testprefs")
 
 # creation of custom Nominatim user agent, to avoid violation of usage policy, and HTTP errors
 geoLocator = Nominatim(user_agent="tzs_request")
@@ -182,19 +215,22 @@ menuFrame.grid(row=0, column=0, sticky="W,E,S,N")
 timeFrame = tk.LabelFrame(content, text="", padx=5, pady=5)
 timeFrame.grid(row=1, column=0, sticky="W,E,S,N")
 
+mapFrame = tk.LabelFrame(content, text="", padx=5, pady=5)
+mapFrame.grid(row=1, column=1, sticky="WESN")
+
 def createNewWindow():
     newWindow = tk.Toplevel(window)
 
-    formHeading = tk.LabelFrame(newWindow, text="Testing", padx=5, pady=5)
+    formHeading = tk.LabelFrame(newWindow, text="Select a Profile", padx=5, pady=5)
     formHeading.grid(row=0, column=0, sticky="W,E,S,N")
 
-    formForm = tk.LabelFrame(newWindow, text="", padx=10, pady=10)
+    formForm = tk.LabelFrame(newWindow, text="Edit Profile", padx=10, pady=10)
     formForm.grid(row=1, column=0, sticky="W,E,S,N")
 
     formFooter = tk.LabelFrame(newWindow, text="", padx=10, pady=10)
     formFooter.grid(row=2, column=0, sticky="W,E,S,N")
 
-    def formLabelWrapper(rownum,sampleText,frameVar):
+    def formLabelWrapper(rownum,sampleText,frameVar,colnum):
         formLabel = tk.Label(
               frameVar,
               text=sampleText,
@@ -202,7 +238,7 @@ def createNewWindow():
         # packs label to the grid
         formLabel.grid(
               row=rownum,
-              column=1, 
+              column=colnum, 
               sticky="W,E,S,N", 
               pady=10)
         return formLabel
@@ -239,12 +275,15 @@ def createNewWindow():
             pady=(10, 10))
         return formButton
 
-    def formExportButtonWrapper(rownum,colnum):
+    ### add pop-up to request json file name for import (currently static as "testprefs")
+    def formImportButtonWrapper(rownum,colnum):
         formButton = tk.Button(
             formFooter,
-            text="Save Profiles",
-            command=lambda: profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5),
-            width=15,
+            text="Load Profiles",
+            image=images.uploadIcon,
+            compound=tk.LEFT,
+            command=lambda: readAndReplace(0,"testprefs"),
+            width=125,
             height=2)
         # packs button to the grid
         formButton.grid(
@@ -255,11 +294,44 @@ def createNewWindow():
             pady=(10, 10))
         return formButton
 
-    formLabelWrapper(0,"Name:",formForm)
-    formLabelWrapper(1,"Business:",formForm)
-    formLabelWrapper(2,"Timezone 1:",formForm)
-    formLabelWrapper(3,"Timezone 2:",formForm)
-    formLabelWrapper(4,"Timezone 3:",formForm)
+    def formExportButtonWrapper(rownum,colnum):
+        formButton = tk.Button(
+            formFooter,
+            text="Save Profiles",
+            image=images.downloadIcon,
+            compound=tk.LEFT,
+            command=lambda: profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5),
+            width=125,
+            height=2)
+        # packs button to the grid
+        formButton.grid(
+            row=rownum,
+            column=colnum,
+            sticky="W,E,S,N",
+            padx=(5),
+            pady=(10, 10))
+        return formButton   
+
+    formDropdown = tk.OptionMenu(
+        formHeading,
+        formEntryVar,
+        *dataList)
+    formDropdown.config(
+        width=15,
+        height=2)
+    formDropdown.grid(
+        row=0,
+        column=0,
+        sticky="W,E,S,N",
+        padx=(5),
+        pady=(10,10))
+
+
+    formLabelWrapper(0,"Name:",formForm,1)
+    formLabelWrapper(1,"Business:",formForm,1)
+    formLabelWrapper(2,"Timezone 1:",formForm,1)
+    formLabelWrapper(3,"Timezone 2:",formForm,1)
+    formLabelWrapper(4,"Timezone 3:",formForm,1)
     # formEntry = formEntryWrapper(0,formEntryVar)
     formEntry = formEntryWrapper(0,formEntryVar)
     formEntry2 = formEntryWrapper(1,formEntryVar2)
@@ -275,7 +347,8 @@ def createNewWindow():
 
     # formEntryWrapper(4,"Enter Timezone 3")
     formApplyButtonWrapper(0,1,formEntry3,formEntry4,formEntry5,"tzVar1","tzVar2","tzVar3")
-    formExportButtonWrapper(0,2)
+    formImportButtonWrapper(0,2)
+    formExportButtonWrapper(0,3)
 
 
 # makeTimezoneMenu creates a tkinter entry field widget with customisable text variables and row numbers
@@ -343,34 +416,45 @@ def addProfileWrapper(tM,tM2,tM3,tz,tz2,tz3):
         text="Set Profile to Default",
         command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,timezoneList2,0,1,2),
         width=25,
-        height=2
-      )
+        height=2)
         # packs button to the grid
     addProfileButton.grid(
         row=0,
         column=1,
         sticky="W,E,S,N",
-        padx=(5),
-        pady=(10, 10)
-      )
+        padx=5,
+        pady=(10,10))
 
 newWindow = tk.Button(
     menuFrame,
     # text="Create New Profile",
-    image=images.profilesPhoto,
+    text="Profile Menu",
+    image=images.profileIcon,
+    compound=tk.LEFT,
     command=lambda: createNewWindow(),
-    width=50,
-    height=2
-  )
+    width=125,
+    height=2)
 # packs button to the grid
 newWindow.grid(
     row=0,
     column=2,
-    sticky="W,E,S,N",
-    padx=(5),
-    pady=(10, 10)
-  )
-newWindow.photoImage=images.profilesPhoto
+    sticky="S,N",
+    padx=5,
+    pady=(10,10))
+
+newWindow.photoImage=images.profileIcon
+
+mapLabel = tk.Label(
+    mapFrame,
+    text="test",
+    font=("Arial", 12))
+# packs label to the grid
+mapLabel.grid(
+    row=0,
+    column=0, 
+    sticky="WESN", 
+    pady=10)
+
 
 # timezoneMenus - entry fields that are used to input timezones for the displayed clocks, used as variables for clock functions below
 timezoneMenu = makeTimezoneMenu(1, timezoneVar)
@@ -389,6 +473,8 @@ addProfileWrapper(timezoneMenu, timezoneMenu2, timezoneMenu3, "tzVar1", "tzVar2"
 # sort this out
 content.rowconfigure(0, weight=1)
 content.rowconfigure(1, weight=3)
+content.columnconfigure(0, weight=1)
+content.columnconfigure(1, weight=1)
 timeFrame.rowconfigure(0, weight=1)
 timeFrame.rowconfigure(1, weight=1)
 timeFrame.rowconfigure(2, weight=1)
@@ -402,6 +488,7 @@ newWindow.rowconfigure(3, weight=1)
 newWindow.rowconfigure(4, weight=1)
 newWindow.columnconfigure(0, weight=1)
 newWindow.columnconfigure(1, weight=1)
+newWindow.columnconfigure(2, weight=1)
 
 
 # MAIN LOOP - starts the window
