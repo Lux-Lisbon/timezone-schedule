@@ -1,10 +1,10 @@
 [
     {
-        "name": "fesfesgesg",
+        "name": "Default",
         "business": "Default Business",
         "timezones": [
-            "Australia/Melbourne",
-            "Asia/Singapore",
+            "Spain",
+            "France",
             "Italy"
         ]
     },
