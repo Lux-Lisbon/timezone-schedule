@@ -3,8 +3,8 @@
         "name": "Default",
         "business": "Default Business",
         "timezones": [
-            "Spain",
-            "France",
+            "Australia/Melbourne",
+            "Asia/Singapore",
             "Italy"
         ]
     },

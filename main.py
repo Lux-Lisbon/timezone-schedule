@@ -11,7 +11,6 @@ from replit import db # repl database library, to store info
 
 window = tk.Tk() # initalisation 
 window.title("Timezone Program") # to set title of window
-window.resizable(1,1)
 
 import images
 
@@ -52,19 +51,19 @@ dataList = []
 # add profile function 
 # find len of profiles and add to db[2] etc
 
-profiles = [
-  {
-    "name": "Default",
-    "business": "Default Business",
-    "timezones": ["Australia/Melbourne", "Asia/Singapore", "Italy"]
-  },
-  {
-    "name": "Custom",
-    "business": "Custom Business",
-    "timezones": ["Australia/Sydney", "Australia/Melbourne", "Australia/Darwin"]
-  }
-]
-db["profiles"] = profiles
+# profiles = [
+#   {
+#     "name": "Default",
+#     "business": "Default Business",
+#     "timezones": ["Australia/Melbourne", "Asia/Singapore", "Italy"]
+#   },
+#   {
+#     "name": "Custom",
+#     "business": "Custom Business",
+#     "timezones": ["Australia/Sydney", "Australia/Melbourne", "Australia/Darwin"]
+#   }
+# ]
+# db["profiles"] = profiles
 
 
 # variable using tk.StringVar() to dynamically change string
@@ -93,35 +92,36 @@ formEntryVar5.set(formEntryList[4])
 
 def profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5):
     try:
-        profiles[0]["name"] = printEntry(formEntry)
-        profiles[0]["business"] = printEntry(formEntry2)
-        profiles[0]["timezones"][0] = printEntry(formEntry3)
-        db["tzVar1"] = printEntry(formEntry3)
-        profiles[0]["timezones"][1] = printEntry(formEntry4)
-        db["tzVar2"] = printEntry(formEntry4)
-        profiles[0]["timezones"][2] = printEntry(formEntry5)
-        db["tzVar3"] = printEntry(formEntry5)
-        db["profiles"] = profiles
-        print(db["profiles"],"\n\n\n",profiles)
+        print("Starting function PPP")
+        print(formEntry,formEntry2,formEntry3,formEntry4,formEntry5)
+        print(printEntry(formEntry))
+        data = readAndReturn("testprefs")
+        numOfProfiles = len(data)
+        print(data)
+        data[1] = {}
+        print(data["name"])
+        data[1]["name"] = printEntry(formEntry)
+        data[1]["business"] = printEntry(formEntry2)
+        data[1]["timezones"][0] = printEntry(formEntry3)
+        data[1]["timezones"][1] = printEntry(formEntry4)
+        data[1]["timezones"][2] = printEntry(formEntry5)
+        # db["profiles"] = profiles
+        # print(dat,"\n\n\n",data)
         # keys = db.keys()
         # print(keys)
+        
         with open("testprefs.json", 'w', encoding='utf-8') as outputfile:
-            json.dump(profiles, outputfile, ensure_ascii=False, indent=4)
-
-        createProfileNameList("testprefs")
+            json.dump(data, outputfile, ensure_ascii=False, indent=4)
 
     except:
         print("Please Try Again!")
         messagebox.showerror("Error","There was an error in saving your preferences as a JSON file.")
 
 def readAndReturn(jsonFileName):
-    try:
-        with open('{}.json'.format(jsonFileName), 'r') as f:
-            data = json.load(f)
-        return data
-    except:
-        print("Please Try Again!")
-        messagebox.showerror("Error","There was an error in loading your preferences. Please try a different file name!")
+    with open('{}.json'.format(jsonFileName), 'r') as f:
+        data = json.load(f)
+
+    return data
 
 def readAndReplace(profileNum,jsonFileName):
     try:
@@ -141,14 +141,6 @@ def writeReadReplace(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profi
     profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5)
     readAndReplace(profileNum,jsonFileName)
 
-def createProfileList(jsonFileName):
-    data = readAndReturn(jsonFileName)
-    print(data)
-    numOfProfiles = len(data)
-    dataList.clear()
-    for x in range(numOfProfiles):
-        dataList.append(data[x])
-
 def createProfileNameList(jsonFileName):
     data = readAndReturn(jsonFileName)
     print(data)
@@ -157,29 +149,7 @@ def createProfileNameList(jsonFileName):
     for x in range(numOfProfiles):
         dataList.append(data[x]["name"])
 
-createProfileList("testprefs")
 createProfileNameList("testprefs")
-
-localFormDict = readAndReturn("testprefs")
-
-localFormEntryList = [
-    localFormDict[0]["name"],
-    localFormDict[0]["business"],
-    localFormDict[0]["timezones"][0],
-    localFormDict[0]["timezones"][1],
-    localFormDict[0]["timezones"][2]
-]
-
-localFormEntryVar = tk.StringVar()
-localFormEntryVar.set(localFormEntryList[0])
-localFormEntryVar2 = tk.StringVar()
-localFormEntryVar2.set(localFormEntryList[1])
-localFormEntryVar3 = tk.StringVar()
-localFormEntryVar3.set(localFormEntryList[2])
-localFormEntryVar4 = tk.StringVar()
-localFormEntryVar4.set(localFormEntryList[3])
-localFormEntryVar5 = tk.StringVar()
-localFormEntryVar5.set(localFormEntryList[4])
 
 # creation of custom Nominatim user agent, to avoid violation of usage policy, and HTTP errors
 geoLocator = Nominatim(user_agent="tzs_request")
@@ -232,16 +202,17 @@ def getTZ(entry, currentTimeZone):
 
 def profileTZSet(timezoneMenu,timezoneMenu2,timezoneMenu3,tz,tz2,tz3,sampleList,num1,num2,num3):
     try:
+        sampleList[num1] = printEntry(timezoneMenu)
+        sampleList[num2] = printEntry(timezoneMenu2)
+        sampleList[num3] = printEntry(timezoneMenu3)
         timezoneVar.set(sampleList[num1])
         timezoneVar2.set(sampleList[num2])
         timezoneVar3.set(sampleList[num3])
+        print(sampleList)
         getTZ(timezoneMenu, tz)
         getTZ(timezoneMenu2, tz2)
         getTZ(timezoneMenu3, tz3)
-        # timezoneMenu.set(localFormEntryVar)
-        # timezoneMenu2.set(localFormEntryVar2)
-        # timezoneMenu3.set(localFormEntryVar3)
-        profileGreeting.config(text="Welcome, {}!".format(printEntry(formEntryVar)))
+        createProfileNameList("testprefs")
     except:
         print("Try another location/timezone!")
         messagebox.showerror("Error","Invalid Location/Timezone. Please try another input!")
@@ -306,7 +277,7 @@ def createNewWindow():
         formButton = tk.Button(
             formFooter,
             text="Apply",
-            command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,localFormEntryList,2,3,4),
+            command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,formEntryList,2,3,4),
             width=15,
             height=2)
         # packs button to the grid
@@ -382,22 +353,14 @@ def createNewWindow():
     formEntry4 = formEntryWrapper(3,formEntryVar4)
     formEntry5 = formEntryWrapper(4,formEntryVar5)
 
-    db["profiles"][0]["name"] = printEntry(formEntry)
-    db["profiles"][0]["business"] = printEntry(formEntry2)
-    db["profiles"][0]["timezones"][0] = printEntry(formEntry3)
-    db["profiles"][0]["timezones"][1] = printEntry(formEntry4)
+    # db["profiles"][0]["name"] = printEntry(formEntry)
+    # db["profiles"][0]["business"] = printEntry(formEntry2)
+    # db["profiles"][0]["timezones"][0] = printEntry(formEntry3)
+    # db["profiles"][0]["timezones"][1] = printEntry(formEntry4)
     # db["profiles"][0]["timezones"][2] = printEntry(formEntry5)
 
     # formEntryWrapper(4,"Enter Timezone 3")
-    formApplyButtonWrapper(
-      0,
-      1,
-      formEntry3,
-      formEntry4,
-      formEntry5,
-      "tzVar1",
-      "tzVar2",
-      "tzVar3")
+    formApplyButtonWrapper(0,1,formEntry3,formEntry4,formEntry5,"tzVar1","tzVar2","tzVar3")
     formImportButtonWrapper(0,2)
     formExportButtonWrapper(0,3)
 
@@ -465,7 +428,7 @@ def addProfileWrapper(tM,tM2,tM3,tz,tz2,tz3):
     addProfileButton = tk.Button(
         menuFrame,
         text="Set Profile to Default",
-        command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,localFormEntryList,0,1,2),
+        command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,timezoneList2,0,1,2),
         width=25,
         height=2)
         # packs button to the grid
@@ -492,19 +455,8 @@ newWindow.grid(
     sticky="S,N",
     padx=5,
     pady=(10,10))
+
 newWindow.photoImage=images.profileIcon
-
-profileGreeting = tk.Label(
-    menuFrame,
-    text="Welcome, {}!".format(printEntry(formEntryVar)),
-    font=("Arial", 12))
-# packs label to the grid
-profileGreeting.grid(
-    row=0,
-    column=3, 
-    sticky="WESN", 
-    pady=10)
-
 
 mapLabel = tk.Label(
     mapFrame,
@@ -533,30 +485,24 @@ addProfileWrapper(timezoneMenu, timezoneMenu2, timezoneMenu3, "tzVar1", "tzVar2"
 
 # used to sort weighting/spacing of rows and columns inside frames
 # sort this out
-
-
-# content.rowconfigure(0, weight=1)
-# content.rowconfigure(1, weight=3)
-# content.columnconfigure(0, weight=1)
-# content.columnconfigure(1, weight=1)
-# timeFrame.rowconfigure(0, weight=1)
-# timeFrame.rowconfigure(1, weight=1)
-# timeFrame.rowconfigure(2, weight=1)
-# timeFrame.rowconfigure(3, weight=1)
-# timeFrame.columnconfigure(1, weight=1)
-# timeFrame.columnconfigure(2, weight=2)
-# menuFrame.rowconfigure(0,weight=1)
-# menuFrame.columnconfigure(1,weight=1)
-# menuFrame.columnconfigure(2,weight=1)
-# menuFrame.columnconfigure(3,weight=1)
-# newWindow.rowconfigure(0, weight=2)
-# newWindow.rowconfigure(1, weight=1)
-# newWindow.rowconfigure(2, weight=1)
-# newWindow.rowconfigure(3, weight=1)
-# newWindow.rowconfigure(4, weight=1)
-# newWindow.columnconfigure(0, weight=1)
-# newWindow.columnconfigure(1, weight=1)
-# newWindow.columnconfigure(2, weight=1)
+content.rowconfigure(0, weight=1)
+content.rowconfigure(1, weight=3)
+content.columnconfigure(0, weight=1)
+content.columnconfigure(1, weight=1)
+timeFrame.rowconfigure(0, weight=1)
+timeFrame.rowconfigure(1, weight=1)
+timeFrame.rowconfigure(2, weight=1)
+timeFrame.rowconfigure(3, weight=1)
+timeFrame.columnconfigure(1, weight=1)
+timeFrame.columnconfigure(2, weight=2)
+newWindow.rowconfigure(0, weight=2)
+newWindow.rowconfigure(1, weight=1)
+newWindow.rowconfigure(2, weight=1)
+newWindow.rowconfigure(3, weight=1)
+newWindow.rowconfigure(4, weight=1)
+newWindow.columnconfigure(0, weight=1)
+newWindow.columnconfigure(1, weight=1)
+newWindow.columnconfigure(2, weight=1)
 
 
 # MAIN LOOP - starts the window
