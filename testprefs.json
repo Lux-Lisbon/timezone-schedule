@@ -1,8 +1,20 @@
 [
-  {
-  "id": 
-  "name": "Default Profile",
-  "business": "Default Business",
-  "groups": ["Australia/", "fake group 2"]
-  }
+    {
+        "name": "Default",
+        "business": "Default Business",
+        "timezones": [
+            "Australia/Melbourne",
+            "Asia/Singapore",
+            "Italy"
+        ]
+    },
+    {
+        "name": "Custom",
+        "business": "Custom Business",
+        "timezones": [
+            "Australia/Sydney",
+            "Australia/Melbourne",
+            "Australia/Darwin"
+        ]
+    }
 ]
