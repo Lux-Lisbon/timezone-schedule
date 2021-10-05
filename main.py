@@ -1,6 +1,7 @@
 # INITIALISATION
 
 import tkinter as tk  # tkinter library, to create gui
+from tkinter import ttk
 from tkinter import messagebox
 import json
 import datetime as dt  # datetime library, to import date/time
@@ -47,23 +48,25 @@ formEntryList = [
 ]
 
 dataList = []
+db["dataList"] = dataList
+dbDataList = db["dataList"]
 
 # add profile function 
 # find len of profiles and add to db[2] etc
 
-# profiles = [
-#   {
-#     "name": "Default",
-#     "business": "Default Business",
-#     "timezones": ["Australia/Melbourne", "Asia/Singapore", "Italy"]
-#   },
-#   {
-#     "name": "Custom",
-#     "business": "Custom Business",
-#     "timezones": ["Australia/Sydney", "Australia/Melbourne", "Australia/Darwin"]
-#   }
-# ]
-# db["profiles"] = profiles
+profiles = [
+   {
+     "name": "Default",
+     "business": "Default Business",
+     "timezones": ["Australia/Melbourne", "Asia/Singapore", "Italy"]
+   },
+   {
+     "name": "Custom",
+     "business": "Custom Business",
+     "timezones": ["Australia/Sydney", "Australia/Melbourne", "Australia/Darwin"]
+   }
+ ]
+db["profiles"] = profiles
 
 
 # variable using tk.StringVar() to dynamically change string
@@ -90,28 +93,20 @@ formEntryVar5 = tk.StringVar()
 formEntryVar5.set(formEntryList[4])
 
 
-def profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5):
+def profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum):
     try:
-        print("Starting function PPP")
-        print(formEntry,formEntry2,formEntry3,formEntry4,formEntry5)
-        print(printEntry(formEntry))
-        data = readAndReturn("testprefs")
-        numOfProfiles = len(data)
-        print(data)
-        data[1] = {}
-        print(data["name"])
-        data[1]["name"] = printEntry(formEntry)
-        data[1]["business"] = printEntry(formEntry2)
-        data[1]["timezones"][0] = printEntry(formEntry3)
-        data[1]["timezones"][1] = printEntry(formEntry4)
-        data[1]["timezones"][2] = printEntry(formEntry5)
+        profiles[profileNum]["name"] = printEntry(formEntry)
+        profiles[profileNum]["business"] = printEntry(formEntry2)
+        profiles[profileNum]["timezones"][0] = printEntry(formEntry3)
+        profiles[profileNum]["timezones"][1] = printEntry(formEntry4)
+        profiles[profileNum]["timezones"][2] = printEntry(formEntry5)
         # db["profiles"] = profiles
         # print(dat,"\n\n\n",data)
         # keys = db.keys()
         # print(keys)
         
         with open("testprefs.json", 'w', encoding='utf-8') as outputfile:
-            json.dump(data, outputfile, ensure_ascii=False, indent=4)
+            json.dump(profiles, outputfile, ensure_ascii=False, indent=4)
 
     except:
         print("Please Try Again!")
@@ -127,7 +122,7 @@ def readAndReplace(profileNum,jsonFileName):
     try:
         with open('{}.json'.format(jsonFileName), 'r') as f:
             data = json.load(f)
-
+        db["data"] = data
         formEntryVar.set(data[profileNum]["name"])
         formEntryVar2.set(data[profileNum]["business"])
         formEntryVar3.set(data[profileNum]["timezones"][0])
@@ -138,7 +133,7 @@ def readAndReplace(profileNum,jsonFileName):
         messagebox.showerror("Error","There was an error in loading your preferences. Please try a different file name!")
 
 def writeReadReplace(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum,jsonFileName):
-    profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5)
+    profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum)
     readAndReplace(profileNum,jsonFileName)
 
 def createProfileNameList(jsonFileName):
@@ -148,6 +143,7 @@ def createProfileNameList(jsonFileName):
     dataList.clear()
     for x in range(numOfProfiles):
         dataList.append(data[x]["name"])
+    
 
 createProfileNameList("testprefs")
 
@@ -200,7 +196,7 @@ def getTZ(entry, currentTimeZone):
         print("Try another location/timezone!")
         messagebox.showerror("Error","Invalid Location/Timezone. Please try another input!")
 
-def profileTZSet(timezoneMenu,timezoneMenu2,timezoneMenu3,tz,tz2,tz3,sampleList,num1,num2,num3):
+def profileTZSet(timezoneMenu,timezoneMenu2,timezoneMenu3,tz,tz2,tz3,sampleList,num1,num2,num3,nestedCommand):
     try:
         sampleList[num1] = printEntry(timezoneMenu)
         sampleList[num2] = printEntry(timezoneMenu2)
@@ -213,6 +209,10 @@ def profileTZSet(timezoneMenu,timezoneMenu2,timezoneMenu3,tz,tz2,tz3,sampleList,
         getTZ(timezoneMenu2, tz2)
         getTZ(timezoneMenu3, tz3)
         createProfileNameList("testprefs")
+        try:
+            nestedCommand
+        except:
+            pass
     except:
         print("Try another location/timezone!")
         messagebox.showerror("Error","Invalid Location/Timezone. Please try another input!")
@@ -273,11 +273,11 @@ def createNewWindow():
             pady=(10))
         return formMenu
 
-    def formApplyButtonWrapper(rownum,colnum,tM,tM2,tM3,tz,tz2,tz3):
+    def formApplyButtonWrapper(rownum,colnum,tM,tM2,tM3,tz,tz2,tz3,nestedCommand):
         formButton = tk.Button(
             formFooter,
             text="Apply",
-            command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,formEntryList,2,3,4),
+            command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,formEntryList,2,3,4,nestedCommand),
             width=15,
             height=2)
         # packs button to the grid
@@ -308,13 +308,13 @@ def createNewWindow():
             pady=(10, 10))
         return formButton
 
-    def formExportButtonWrapper(rownum,colnum):
+    def formExportButtonWrapper(rownum,colnum,profileNum):
         formButton = tk.Button(
             formFooter,
             text="Save Profiles",
             image=images.downloadIcon,
             compound=tk.LEFT,
-            command=lambda: profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5),
+            command=lambda: profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum),
             width=125,
             height=2)
         # packs button to the grid
@@ -326,13 +326,16 @@ def createNewWindow():
             pady=(10, 10))
         return formButton   
 
-    formDropdown = tk.OptionMenu(
+    testVar = "test342423"
+
+    formDropdown = ttk.OptionMenu(
         formHeading,
         formEntryVar,
+        testVar,
         *dataList)
-    formDropdown.config(
-        width=15,
-        height=2)
+    # formDropdown.config(
+    #     width=15)
+    #     height=2)
     formDropdown.grid(
         row=0,
         column=0,
@@ -340,6 +343,9 @@ def createNewWindow():
         padx=(5),
         pady=(10,10))
 
+    def setOptions():
+        formDropdown.set_menu(*dataList)
+    setOptions = setOptions()
 
     formLabelWrapper(0,"Name:",formForm,1)
     formLabelWrapper(1,"Business:",formForm,1)
@@ -360,9 +366,9 @@ def createNewWindow():
     # db["profiles"][0]["timezones"][2] = printEntry(formEntry5)
 
     # formEntryWrapper(4,"Enter Timezone 3")
-    formApplyButtonWrapper(0,1,formEntry3,formEntry4,formEntry5,"tzVar1","tzVar2","tzVar3")
+    formApplyButtonWrapper(0,1,formEntry3,formEntry4,formEntry5,"tzVar1","tzVar2","tzVar3",setOptions)
     formImportButtonWrapper(0,2)
-    formExportButtonWrapper(0,3)
+    formExportButtonWrapper(0,3,0)
 
 
 # makeTimezoneMenu creates a tkinter entry field widget with customisable text variables and row numbers
