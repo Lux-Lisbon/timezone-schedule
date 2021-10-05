@@ -4,6 +4,8 @@ import tkinter as tk  # tkinter library, to create gui
 from tkinter import ttk
 from tkinter import messagebox
 import gmplot
+import flask
+import gmplotTest
 import json
 import datetime as dt  # datetime library, to import date/time
 import pytz  # pytz library, to use timezone format
@@ -508,14 +510,17 @@ mapLabel.grid(
     sticky="WESN", 
     pady=10)
 
-def makeMapButton(rownum):
+def makeMapButton(rownum, entry):
+    coordsList = getCoords(entry)
+    locLat = coordsList[0]
+    locLong = coordsList[1]
     # creation and properties of button widget
     mapButton = tk.Button(
         mapFrame,
         text="",
         image=images.mapIcon,
         compound=tk.LEFT,
-        command="",
+        command=lambda: gmplotTest.gMapPlot(locLat,locLong),
         width=50,
         height=50)
     # packs button to the grid
@@ -529,6 +534,7 @@ def makeMapButton(rownum):
 
 
 
+
 # timezoneMenus - entry fields that are used to input timezones for the displayed clocks, used as variables for clock functions below
 timezoneMenu = makeTimezoneMenu(1, timezoneVar)
 timezoneMenu2 = makeTimezoneMenu(2, timezoneVar2)
@@ -539,9 +545,9 @@ timezoneMenu3 = makeTimezoneMenu(3, timezoneVar3)
 clock(makeGuiClockWrapper(makeTimezoneButton(1), 1, "tzVar1", timezoneMenu), "tzVar1")
 clock(makeGuiClockWrapper(makeTimezoneButton(2), 2, "tzVar2", timezoneMenu2), "tzVar2")
 clock(makeGuiClockWrapper(makeTimezoneButton(3), 3, "tzVar3", timezoneMenu3), "tzVar3")
-makeMapButton(0)
-makeMapButton(1)
-makeMapButton(2)
+makeMapButton(0,timezoneMenu)
+makeMapButton(1,timezoneMenu2)
+makeMapButton(2,timezoneMenu3)
 
 addProfileWrapper(timezoneMenu, timezoneMenu2, timezoneMenu3, "tzVar1", "tzVar2", "tzVar3")
 

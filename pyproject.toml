@@ -12,6 +12,7 @@ pytz = "^2021.1"
 timezonefinder = "^5.2.0"
 replit = "^2.0.0"
 gmplot = "^1.4.1"
+flask = "^1.1.4"
 
 [tool.poetry.dev-dependencies]
 
