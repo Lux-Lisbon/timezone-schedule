@@ -47,6 +47,15 @@ formEntryList = [
     db["profiles"][0]["timezones"][2]
 ]
 
+formProfileList = [
+    "",
+    db["profiles"][0]["name"],
+    db["profiles"][0]["business"],
+    db["profiles"][0]["timezones"][0], 
+    db["profiles"][0]["timezones"][1], 
+    db["profiles"][0]["timezones"][2]
+]
+
 dataList = []
 db["dataList"] = dataList
 dbDataList = db["dataList"]
@@ -91,6 +100,9 @@ formEntryVar4 = tk.StringVar()
 formEntryVar4.set(formEntryList[3])
 formEntryVar5 = tk.StringVar()
 formEntryVar5.set(formEntryList[4])
+
+formProfileVar = tk.StringVar()
+formProfileVar.set(formProfileList[0])
 
 
 def profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum):
@@ -141,6 +153,7 @@ def createProfileNameList(jsonFileName):
     print(data)
     numOfProfiles = len(data)
     dataList.clear()
+    dataList.append("")
     for x in range(numOfProfiles):
         dataList.append(data[x]["name"])
     
@@ -211,6 +224,7 @@ def profileTZSet(timezoneMenu,timezoneMenu2,timezoneMenu3,tz,tz2,tz3,sampleList,
         createProfileNameList("testprefs")
         try:
             nestedCommand
+            print("test")
         except:
             pass
     except:
@@ -277,9 +291,11 @@ def createNewWindow():
         formButton = tk.Button(
             formFooter,
             text="Apply",
+            image=images.checkIcon,
+            compound=tk.LEFT,
             command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,formEntryList,2,3,4,nestedCommand),
-            width=15,
-            height=2)
+            width=125,
+            height=40)
         # packs button to the grid
         formButton.grid(
             row=rownum,
@@ -298,7 +314,7 @@ def createNewWindow():
             compound=tk.LEFT,
             command=lambda: readAndReplace(0,"testprefs"),
             width=125,
-            height=2)
+            height=40)
         # packs button to the grid
         formButton.grid(
             row=rownum,
@@ -316,7 +332,7 @@ def createNewWindow():
             compound=tk.LEFT,
             command=lambda: profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum),
             width=125,
-            height=2)
+            height=40)
         # packs button to the grid
         formButton.grid(
             row=rownum,
@@ -326,12 +342,12 @@ def createNewWindow():
             pady=(10, 10))
         return formButton   
 
-    testVar = "test342423"
+    testVar = tk.StringVar()
 
     formDropdown = ttk.OptionMenu(
         formHeading,
-        formEntryVar,
         testVar,
+        "Select an Option",
         *dataList)
     # formDropdown.config(
     #     width=15)
@@ -434,9 +450,11 @@ def addProfileWrapper(tM,tM2,tM3,tz,tz2,tz3):
     addProfileButton = tk.Button(
         menuFrame,
         text="Set Profile to Default",
-        command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,timezoneList2,0,1,2),
-        width=25,
-        height=2)
+        image=images.undoIcon,
+        compound=tk.LEFT,
+        command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,timezoneList2,0,1,2,None),
+        width=200,
+        height=40)
         # packs button to the grid
     addProfileButton.grid(
         row=0,
@@ -453,7 +471,7 @@ newWindow = tk.Button(
     compound=tk.LEFT,
     command=lambda: createNewWindow(),
     width=125,
-    height=2)
+    height=40)
 # packs button to the grid
 newWindow.grid(
     row=0,
@@ -461,6 +479,17 @@ newWindow.grid(
     sticky="S,N",
     padx=5,
     pady=(10,10))
+
+profileGreeting = tk.Label(
+    menuFrame,
+    text="Welcome, {}!".format(formProfileVar),
+    font=("Arial", 12))
+# packs label to the grid
+profileGreeting.grid(
+    row=0,
+    column=3, 
+    sticky="WESN", 
+    pady=10)
 
 newWindow.photoImage=images.profileIcon
 
@@ -475,6 +504,26 @@ mapLabel.grid(
     sticky="WESN", 
     pady=10)
 
+def makeMapButton(rownum):
+    # creation and properties of button widget
+    mapButton = tk.Button(
+        mapFrame,
+        text="",
+        image=images.mapIcon,
+        compound=tk.LEFT,
+        command="",
+        width=50,
+        height=50)
+    # packs button to the grid
+    mapButton.grid(
+        row=rownum,
+        column=0,
+        sticky="W,E,S,N",
+        padx=(5),
+        pady=(35))
+    return mapButton
+
+
 
 # timezoneMenus - entry fields that are used to input timezones for the displayed clocks, used as variables for clock functions below
 timezoneMenu = makeTimezoneMenu(1, timezoneVar)
@@ -486,6 +535,9 @@ timezoneMenu3 = makeTimezoneMenu(3, timezoneVar3)
 clock(makeGuiClockWrapper(makeTimezoneButton(1), 1, "tzVar1", timezoneMenu), "tzVar1")
 clock(makeGuiClockWrapper(makeTimezoneButton(2), 2, "tzVar2", timezoneMenu2), "tzVar2")
 clock(makeGuiClockWrapper(makeTimezoneButton(3), 3, "tzVar3", timezoneMenu3), "tzVar3")
+makeMapButton(0)
+makeMapButton(1)
+makeMapButton(2)
 
 addProfileWrapper(timezoneMenu, timezoneMenu2, timezoneMenu3, "tzVar1", "tzVar2", "tzVar3")
 

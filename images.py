@@ -14,3 +14,6 @@ def imageDefine(location):
 profileIcon = imageDefine("imageFolder/profile.png")
 uploadIcon = imageDefine("imageFolder/upload.png")
 downloadIcon = imageDefine("imageFolder/download.png")
+checkIcon = imageDefine("imageFolder/check.png")
+undoIcon = imageDefine("imageFolder/undo.png")
+mapIcon = imageDefine("imageFolder/map.png")
