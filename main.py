@@ -3,6 +3,7 @@
 import tkinter as tk  # tkinter library, to create gui
 from tkinter import ttk
 from tkinter import messagebox
+import gmplot
 import json
 import datetime as dt  # datetime library, to import date/time
 import pytz  # pytz library, to use timezone format
@@ -443,6 +444,9 @@ def makeGuiClockWrapper(tzButton, rownum, tz, timezoneMenu):
     tzButton.config(command=lambda: getTZ(timezoneMenu, tz))
     return guiClock
 
+
+def createMenuWindow():
+    print("Hello World")
 # --------------------------------------------------
 # Menu Header
 
