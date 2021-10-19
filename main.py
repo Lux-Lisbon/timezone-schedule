@@ -1,12 +1,12 @@
 # INITIALISATION
 
 import tkinter as tk  # tkinter library, to create gui
-from tkinter import ttk
-from tkinter import messagebox
-import gmplot
-import flask
-import gmplotTest
-import json
+from tkinter import ttk # import ttk from tkinter, an extension 
+from tkinter import messagebox # import messagebox from tkinter, a messagebox exception to display except: notices
+import gmplot # to plot coordinates on a google map
+import flask # flask library, to create a virtual web server
+import gmplotTest # gmplotTest.py, another file within this folder
+import json # json language for storing/saving/writing/editing profiles
 import datetime as dt  # datetime library, to import date/time
 import pytz  # pytz library, to use timezone format
 from geopy.geocoders import Nominatim # geopy library, to get coords from entry
@@ -38,10 +38,12 @@ timezoneList = [
     "Australia/Melbourne", "Singapore", "US/Central", "Europe/Paris"
 ]
 
+# sample timezone for use in profile form
 timezoneList2 = [
     "China", "London", "Amsterdam"
 ]
 
+# list of database stores for conversion to tk.stringvar
 formEntryList = [
     db["profiles"][0]["name"],
     db["profiles"][0]["business"],
@@ -50,6 +52,7 @@ formEntryList = [
     db["profiles"][0]["timezones"][2]
 ]
 
+# another list of database stores for conversion to tk.stringvar under a different name - as required
 formProfileList = [
     "",
     db["profiles"][0]["name"],
@@ -59,6 +62,7 @@ formProfileList = [
     db["profiles"][0]["timezones"][2]
 ]
 
+# creation of datalist list and database key for use in dropdown menu
 dataList = []
 db["dataList"] = dataList
 dbDataList = db["dataList"]
@@ -66,6 +70,8 @@ dbDataList = db["dataList"]
 # add profile function 
 # find len of profiles and add to db[2] etc
 
+# profiles dictionary for default template of what profile json should look like
+# this profiles dictionary is written as a template when writing to json
 profiles = [
    {
      "name": "Default",
@@ -103,11 +109,13 @@ formEntryVar4 = tk.StringVar()
 formEntryVar4.set(formEntryList[3])
 formEntryVar5 = tk.StringVar()
 formEntryVar5.set(formEntryList[4])
-
 formProfileVar = tk.StringVar()
-formProfileVar.set(formProfileList[0])
+formProfileVar.set(formProfileList[1])
 
-
+# the profilePropertyPrinter() function is used to save profile preferences/inputs
+# a.k.a writing the profile preferences/inputs to (in this case) testPrefs.json
+# takes arguments formEntry,formEntry2 (inputs of form entry fields) etc... and writes them to the JSON file.
+# try/except is implemented to catch any errors. if except runs, a message box will appear on screen.
 def profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum):
     try:
         profiles[profileNum]["name"] = printEntry(formEntry)
@@ -115,10 +123,6 @@ def profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5
         profiles[profileNum]["timezones"][0] = printEntry(formEntry3)
         profiles[profileNum]["timezones"][1] = printEntry(formEntry4)
         profiles[profileNum]["timezones"][2] = printEntry(formEntry5)
-        # db["profiles"] = profiles
-        # print(dat,"\n\n\n",data)
-        # keys = db.keys()
-        # print(keys)
         
         with open("testprefs.json", 'w', encoding='utf-8') as outputfile:
             json.dump(profiles, outputfile, ensure_ascii=False, indent=4)
@@ -127,12 +131,17 @@ def profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5
         print("Please Try Again!")
         messagebox.showerror("Error","There was an error in saving your preferences as a JSON file.")
 
+# the readAndReturn() function is used to load profile preferences/inputs from a JSON file as defined in an argument.
+# the functions only loads the JSON, and then returns it as a dictionary.
 def readAndReturn(jsonFileName):
     with open('{}.json'.format(jsonFileName), 'r') as f:
         data = json.load(f)
 
     return data
 
+# the readAndReturn() function is used to load profile preferences/inputs from a JSON file as defined in an argument.
+# on top of viewing the loaded JSON, it REPLACES the current inputs with the ones stored from the JSON, therefore "loading".
+# this is unlike readAndReturn(), which merely views the JSON and returns it as a dictionary.
 def readAndReplace(profileNum,jsonFileName):
     try:
         with open('{}.json'.format(jsonFileName), 'r') as f:
@@ -147,10 +156,7 @@ def readAndReplace(profileNum,jsonFileName):
         print("Please Try Again!")
         messagebox.showerror("Error","There was an error in loading your preferences. Please try a different file name!")
 
-def writeReadReplace(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum,jsonFileName):
-    profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum)
-    readAndReplace(profileNum,jsonFileName)
-
+# the createProfileNameList() function is used to create the list of profile names shown in the dropdown menu.
 def createProfileNameList(jsonFileName):
     data = readAndReturn(jsonFileName)
     print(data)
@@ -159,8 +165,6 @@ def createProfileNameList(jsonFileName):
     dataList.append("")
     for x in range(numOfProfiles):
         dataList.append(data[x]["name"])
-    
-
 createProfileNameList("testprefs")
 
 # creation of custom Nominatim user agent, to avoid violation of usage policy, and HTTP errors
@@ -212,19 +216,24 @@ def getTZ(entry, currentTimeZone):
         print("Try another location/timezone!")
         messagebox.showerror("Error","Invalid Location/Timezone. Please try another input!")
 
+# the profileTZSet() function is responsible for applying the preferences of the selected profile to the timezones in the main window. if this fails, an error messagebox will appear.
 def profileTZSet(timezoneMenu,timezoneMenu2,timezoneMenu3,tz,tz2,tz3,sampleList,num1,num2,num3,nestedCommand):
     try:
+        # tries assigning user inputs currently in main program to sampleList[]
         sampleList[num1] = printEntry(timezoneMenu)
         sampleList[num2] = printEntry(timezoneMenu2)
         sampleList[num3] = printEntry(timezoneMenu3)
+        # sets StringVars to those user inputs
         timezoneVar.set(sampleList[num1])
         timezoneVar2.set(sampleList[num2])
         timezoneVar3.set(sampleList[num3])
-        print(sampleList)
+        # sets the coordinates of each clock to the inputs from the forms using the database
         getTZ(timezoneMenu, tz)
         getTZ(timezoneMenu2, tz2)
         getTZ(timezoneMenu3, tz3)
+        # updates the list of profiles within the dropdown list
         createProfileNameList("testprefs")
+        formProfileVar.set(formProfileList[1])
         try:
             nestedCommand
             print("test")
@@ -239,28 +248,25 @@ def profileTZSet(timezoneMenu,timezoneMenu2,timezoneMenu3,tz,tz2,tz3,sampleList,
 # .Frame() and .LabelFrame() - for storing widgets, to organise grid section
 content = tk.Frame(window)
 content.grid(row=0, column=0, sticky="W,E,S,N")
-
 menuFrame = tk.LabelFrame(content, text="", padx=5, pady=5)
 menuFrame.grid(row=0, column=0, sticky="W,E,S,N")
-
 timeFrame = tk.LabelFrame(content, text="", padx=5, pady=5)
 timeFrame.grid(row=1, column=0, sticky="W,E,S,N")
-
 mapFrame = tk.LabelFrame(content, text="", padx=5, pady=5)
 mapFrame.grid(row=1, column=1, sticky="WESN")
 
+# the createNewWindow() function is responsible for everything that regards the GUI of the 'Profile Menu'
 def createNewWindow():
+    # .Frame() and .LabelFrame() - for storing widgets, to organise grid section
     newWindow = tk.Toplevel(window)
-
     formHeading = tk.LabelFrame(newWindow, text="Select a Profile", padx=5, pady=5)
     formHeading.grid(row=0, column=0, sticky="W,E,S,N")
-
     formForm = tk.LabelFrame(newWindow, text="Edit Profile", padx=10, pady=10)
     formForm.grid(row=1, column=0, sticky="W,E,S,N")
-
     formFooter = tk.LabelFrame(newWindow, text="", padx=10, pady=10)
     formFooter.grid(row=2, column=0, sticky="W,E,S,N")
 
+    # the formLabelWrapper() function creates the text widgets on-screen.
     def formLabelWrapper(rownum,sampleText,frameVar,colnum):
         formLabel = tk.Label(
               frameVar,
@@ -274,6 +280,7 @@ def createNewWindow():
               pady=10)
         return formLabel
 
+    # the formEntryWrapper() function creates the entry fields on-screen.
     def formEntryWrapper(rownum,formTextVar):
     # creation and properties of entry widget
         formMenu = tk.Entry(
@@ -290,12 +297,14 @@ def createNewWindow():
             pady=(10))
         return formMenu
 
+    # the formApplyButtonWrapper() function creates the apply button within the profile menu.
     def formApplyButtonWrapper(rownum,colnum,tM,tM2,tM3,tz,tz2,tz3,nestedCommand):
         formButton = tk.Button(
             formFooter,
             text="Apply",
-            image=images.checkIcon,
+            image=images.checkIcon, # adds the check icon to the button
             compound=tk.LEFT,
+            # on click, the profile preferences will be applied to the timezones/clocks in the main program
             command=lambda: profileTZSet(tM,tM2,tM3,tz,tz2,tz3,formEntryList,2,3,4,nestedCommand),
             width=125,
             height=40)
@@ -308,13 +317,14 @@ def createNewWindow():
             pady=(10, 10))
         return formButton
 
-    ### add pop-up to request json file name for import (currently static as "testprefs")
+    # the formImportButtonWrapper() function creates the load profile button within the profile menu.
     def formImportButtonWrapper(rownum,colnum):
         formButton = tk.Button(
             formFooter,
             text="Load Profiles",
             image=images.uploadIcon,
             compound=tk.LEFT,
+            # on click, the preferences/profile stored within the JSON and database will be loaded into the selected menu.
             command=lambda: readAndReplace(0,"testprefs"),
             width=125,
             height=40)
@@ -327,12 +337,14 @@ def createNewWindow():
             pady=(10, 10))
         return formButton
 
+    # the formExportButtonWrapper() function creates the save profile button within the profile menu.
     def formExportButtonWrapper(rownum,colnum,profileNum):
         formButton = tk.Button(
             formFooter,
             text="Save Profiles",
             image=images.downloadIcon,
             compound=tk.LEFT,
+            # on click, the user inputs for profile preferences will be saved into the JSON and database.
             command=lambda: profilePropertyPrinter(formEntry,formEntry2,formEntry3,formEntry4,formEntry5,profileNum),
             width=125,
             height=40)
@@ -345,8 +357,9 @@ def createNewWindow():
             pady=(10, 10))
         return formButton   
 
+    # test StringVar() for Dropdown below
     testVar = tk.StringVar()
-
+    # formDropdown creates the dropdown option list within the profile menu
     formDropdown = ttk.OptionMenu(
         formHeading,
         testVar,
@@ -361,30 +374,23 @@ def createNewWindow():
         sticky="W,E,S,N",
         padx=(5),
         pady=(10,10))
-
+    # the setOptions() function sets the dropdown menu's option list
     def setOptions():
         formDropdown.set_menu(*dataList)
     setOptions = setOptions()
 
+    # creating and packing every widget to the tkinter/gui grid
     formLabelWrapper(0,"Name:",formForm,1)
     formLabelWrapper(1,"Business:",formForm,1)
     formLabelWrapper(2,"Timezone 1:",formForm,1)
     formLabelWrapper(3,"Timezone 2:",formForm,1)
     formLabelWrapper(4,"Timezone 3:",formForm,1)
-    # formEntry = formEntryWrapper(0,formEntryVar)
     formEntry = formEntryWrapper(0,formEntryVar)
     formEntry2 = formEntryWrapper(1,formEntryVar2)
     formEntry3 = formEntryWrapper(2,formEntryVar3)
     formEntry4 = formEntryWrapper(3,formEntryVar4)
     formEntry5 = formEntryWrapper(4,formEntryVar5)
 
-    # db["profiles"][0]["name"] = printEntry(formEntry)
-    # db["profiles"][0]["business"] = printEntry(formEntry2)
-    # db["profiles"][0]["timezones"][0] = printEntry(formEntry3)
-    # db["profiles"][0]["timezones"][1] = printEntry(formEntry4)
-    # db["profiles"][0]["timezones"][2] = printEntry(formEntry5)
-
-    # formEntryWrapper(4,"Enter Timezone 3")
     formApplyButtonWrapper(0,1,formEntry3,formEntry4,formEntry5,"tzVar1","tzVar2","tzVar3",setOptions)
     formImportButtonWrapper(0,2)
     formExportButtonWrapper(0,3,0)
@@ -446,12 +452,10 @@ def makeGuiClockWrapper(tzButton, rownum, tz, timezoneMenu):
     tzButton.config(command=lambda: getTZ(timezoneMenu, tz))
     return guiClock
 
-
-def createMenuWindow():
-    print("Hello World")
 # --------------------------------------------------
 # Menu Header
 
+# addProfileWrapper creates a tkinter button widget that allows the user to set the timezone values to default.
 def addProfileWrapper(tM,tM2,tM3,tz,tz2,tz3):
     addProfileButton = tk.Button(
         menuFrame,
@@ -469,6 +473,7 @@ def addProfileWrapper(tM,tM2,tM3,tz,tz2,tz3):
         padx=5,
         pady=(10,10))
 
+# newWindow creates a tkinter button widget that opens the profile menu by running createNewWindow() on click
 newWindow = tk.Button(
     menuFrame,
     # text="Create New Profile",
@@ -486,9 +491,10 @@ newWindow.grid(
     padx=5,
     pady=(10,10))
 
+# profileGreeting is a text field that greets the user, based on the name of the profile they are accessing.
 profileGreeting = tk.Label(
     menuFrame,
-    text="Welcome, {}!".format(formProfileVar),
+    text=("Welcome, {}!".format(printEntry(formProfileVar))),
     font=("Arial", 12))
 # packs label to the grid
 profileGreeting.grid(
@@ -497,19 +503,11 @@ profileGreeting.grid(
     sticky="WESN", 
     pady=10)
 
+# adds the "profileIcon" image to the newWindow button
 newWindow.photoImage=images.profileIcon
 
-mapLabel = tk.Label(
-    mapFrame,
-    text="test",
-    font=("Arial", 12))
-# packs label to the grid
-mapLabel.grid(
-    row=0,
-    column=0, 
-    sticky="WESN", 
-    pady=10)
-
+# makeMapButton is a function that creates buttons to open up a flask environment with a google map and waypoint corresponding to coordinates that derive from the current user input within the timezone entry fields.
+# this is done by running the gmplotTest.gMapPlot() function. (see gmplotTest.py)
 def makeMapButton(rownum, entry):
     coordsList = getCoords(entry)
     locLat = coordsList[0]
@@ -532,14 +530,10 @@ def makeMapButton(rownum, entry):
         pady=(35))
     return mapButton
 
-
-
-
 # timezoneMenus - entry fields that are used to input timezones for the displayed clocks, used as variables for clock functions below
 timezoneMenu = makeTimezoneMenu(1, timezoneVar)
 timezoneMenu2 = makeTimezoneMenu(2, timezoneVar2)
 timezoneMenu3 = makeTimezoneMenu(3, timezoneVar3)
-# print(timezoneMenu,timezoneMenu2,timezoneMenu3)
 
 # run clock functions, creating labels and buttons
 clock(makeGuiClockWrapper(makeTimezoneButton(1), 1, "tzVar1", timezoneMenu), "tzVar1")
@@ -548,11 +542,9 @@ clock(makeGuiClockWrapper(makeTimezoneButton(3), 3, "tzVar3", timezoneMenu3), "t
 makeMapButton(0,timezoneMenu)
 makeMapButton(1,timezoneMenu2)
 makeMapButton(2,timezoneMenu3)
-
 addProfileWrapper(timezoneMenu, timezoneMenu2, timezoneMenu3, "tzVar1", "tzVar2", "tzVar3")
 
 # used to sort weighting/spacing of rows and columns inside frames
-# sort this out
 content.rowconfigure(0, weight=1)
 content.rowconfigure(1, weight=3)
 content.columnconfigure(0, weight=1)

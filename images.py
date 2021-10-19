@@ -10,7 +10,6 @@ def imageDefine(location):
     return photo
 # Creating a photoimage object to use image
 
-
 profileIcon = imageDefine("imageFolder/profile.png")
 uploadIcon = imageDefine("imageFolder/upload.png")
 downloadIcon = imageDefine("imageFolder/download.png")

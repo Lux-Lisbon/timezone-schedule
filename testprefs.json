@@ -1,11 +1,11 @@
 [
     {
-        "name": "Ella",
-        "business": "Default Business",
+        "name": "server2",
+        "business": "side2",
         "timezones": [
-            "Australia/Melbourne",
-            "Asia/Singapore",
-            "Italy"
+            "testing2",
+            "the2",
+            "cloud2"
         ]
     },
     {
